@@ -1,16 +1,75 @@
-# Transparency
+# Transparency Survey
 
-## Assessment Methodology
+## How to Assessment
 
-## Survey
+### 1. Open LLM Model
+
+- 確認 LLM 是否提供 `Model Card`、`Technical Report`、`Transparency Note` 等模型資訊接露文件
+- 確認 LLM Document 中是否包含以下資訊 (主要參考 Google)
+    - Model Summary
+        - Architecture
+        - Inputs and outputs
+        - Terms and links
+        - Model data
+    - Model Usage and Limitations
+        - Intended usage
+        - Limitations
+    - Implementation
+        - Hardware
+        - Software
+    - Evaluation
+        - Performance
+        - Ethics and Safety
+        - Dangerous Capability
+
+- 目前常見的開源 LLM Model 大部分都有提供相關的模型資訊接露文件，但是還是有一些模型僅提供部分資訊
+
+    ||Gemma 3|Qwen 3|GPT-OSS|Llama 3|Mistral Small 3.1|Command R/R+|
+    |---|:---:|:---:|:---:|:---:|:---:|:---:|
+    |Architecture|✅|✅|✅|✅||✅|
+    |Inputs and outputs|✅|✅|✅|✅|✅|✅|
+    |Terms and links|✅|⚠️|✅|✅|✅|✅|
+    |Model data|✅|✅|✅|✅|
+    |Intended usage|✅|⚠️|✅|✅|✅|✅|
+    |Limitations|✅||✅|✅||✅|
+    |Hardware|✅||✅|✅||✅|✅|
+    |Software|✅||✅|✅||
+    |Performance|✅|✅|✅|✅|✅|✅|
+    |Ethics and Safety|✅||✅|✅||✅|
+
+    ```plain_text
+    # 待討論
+    1. 模型資訊接露文件所需包含的內容是否有需要再增減
+    2. 每部分撰寫的詳細程度 (不同 LLM 都有所差異)
+    ```
+
+#### Reference
+
+- [llm-stats.com - LLM Leaderboard 2025](https://llm-stats.com/)
+- [Artificial Analysis - LLM Leaderboard](https://artificialanalysis.ai/leaderboards/models?open_weights=open_source)
+- [Gemma 3 model card](https://ai.google.dev/gemma/docs/core/model_card_3)
+- [Qwen3 Technical Report](https://arxiv.org/pdf/2505.09388)
+- [gpt-oss-120b & gpt-oss-20b Model Card](https://openai.com/zh-Hant/index/gpt-oss-model-card/)
+- [llama-models/models/llama3_3/MODEL_CARD.md](https://github.com/meta-llama/llama-models/blob/main/models/llama3_3/MODEL_CARD.md)
+- [Mistral Small 3.1](https://mistral.ai/news/mistral-small-3-1)
+- [Cohere - Command A Technical Report](https://cohere.com/research/papers/command-a-technical-report.pdf?_gl=1*11y2fde*_ga*OTY5MTE0OTQ1LjE3NTg3ODQ3OTQ.*_ga_CRGS116RZS*czE3NTg4MDQ2MjAkbzQkZzAkdDE3NTg4MDQ2MjAkajYwJGwwJGgw#page=46&zoom=100,62,620)
+- [Cohere - Command R and Command R+ Model Card](https://docs.cohere.com/docs/responsible-use)
+
+### 2. Customized Open LLM Model
+
+若衡量對象為自行微調的 LLM Model (ex: Llama-3.1-Nemotron-70B-Instruct)，除了確認基礎模型的模型資訊接露文件外，也須確認微調過程是否有提供相關的模型資訊接露文件，可參考以下 Nvidia 開源模型 Llama-3.1-Nnemotron-70B-Instruct 的接露文件
+
+#### Reference
+
+- [Nvidia - llama-3.1-nemotron-70b-instruct](https://build.nvidia.com/nvidia/llama-3_1-nemotron-70b-instruct/modelcard)
+
+## Source
 
 ### 1. Google
 
-#### 1.1 Documentation
+#### 1.1 Google - Model Card
 
 Offer thorough documentation, like Technical Reports or Model Card, on how the generative AI service or product works using understandable language.
-
-#### 1.2 Google - Model Card
 
 |Info Type||
 |---|---|
@@ -19,7 +78,7 @@ Offer thorough documentation, like Technical Reports or Model Card, on how the g
 |Implementation|Hardware, Software|
 |Evaluation|Performance, Ethics and Safety, Dangerous Capability|
 
-#### 1.3 Google - Model Card (Evaluation)
+#### 1.2 Google - Model Card (Evaluation)
 
 Refer to Gemma 3 model card and Gemma 2 model card
 
@@ -47,21 +106,6 @@ Refer to Gemma 3 model card and Gemma 2 model card
     |Offensive cybersecurity|InterCode-CTF, Internal CTF, Hack the Box|
     |Self-proliferation|Self-proliferation|
     |Persuasion|Charm offensive, Click Links, Find Info, Run Code, Money talks, Web of Lies|
-
-#### 1.4 HuggingFace - Model Card
-
-|Info Type||
-|---|---|
-|Model Details|Model Description, Model Sources|
-|Uses|Direct Use, Downstream Use, Out-of-Scope Use|
-|Bias, Risks, and Limitations||
-|How to Get Started with the Model||
-|Training Details|Training Data, Training Procedure|
-|Evaluation|Testing Data, Factors & Metrics, Results|
-|Model Examination||
-|Environmental Impact|Hardware Type, Hours used, Cloud Provider, Compute Region, Carbon Emitted|
-|Technical Specifications|Model Architecture and Objective, Compute Infrastructure|
-|Other|Citation, Glossary ...|
 
 #### Reference
 
@@ -140,9 +184,32 @@ Microsoft's Transparency Notes are intended to help you understand how our AI te
 - [OpenAI o3 and o4-mini System Card](https://cdn.openai.com/pdf/2221c875-02dc-4789-800b-e7758f3722c1/o3-and-o4-mini-system-card.pdf)
 - [Introducing greater transparency and control for web search queries in Microsoft 365 Copilot and Microsoft 365 Copilot Chat](https://techcommunity.microsoft.com/blog/microsoft365copilotblog/introducing-greater-transparency-and-control-for-web-search-queries-in-microsoft/4253080)
 
-### 3. Standard
+### 3. HuggingFace
 
-#### 3.1 The Foundation Model Transparency Index
+#### Model Card
+
+Model cards are essential for discoverability, reproducibility, and sharing
+
+|Info Type||
+|---|---|
+|Model Details|Model Description, Model Sources|
+|Uses|Direct Use, Downstream Use, Out-of-Scope Use|
+|Bias, Risks, and Limitations||
+|How to Get Started with the Model||
+|Training Details|Training Data, Training Procedure|
+|Evaluation|Testing Data, Factors & Metrics, Results|
+|Model Examination||
+|Environmental Impact|Hardware Type, Hours used, Cloud Provider, Compute Region, Carbon Emitted|
+|Technical Specifications|Model Architecture and Objective, Compute Infrastructure|
+|Other|Citation, Glossary ...|
+
+#### Reference
+
+- [HuggingFace - Model Cards](https://huggingface.co/docs/hub/model-cards#model-card-text)
+
+### 4. Standard
+
+#### The Foundation Model Transparency Index
 
 - 100 fine-grained transparency indicators across three main domains: Upstream, Model, and Downstream
 - Binary scoring (0/1) for each indicator (publicly available or not), with independent double review and company feedback
@@ -158,24 +225,24 @@ Microsoft's Transparency Notes are intended to help you understand how our AI te
 - [The Foundation Model Transparency Index, 2023, Bommasani, Rishi, et al.](https://arxiv.org/abs/2310.12941)
 - [Human-Centered Artificial Intelligence - The 2025 AI Index Report](https://hai.stanford.edu/ai-index/2025-ai-index-report)
 
-### 4. EY 安永
+### 5. EY 安永
 
-#### 4.1 利害關係人資訊揭露與權益影響
+#### 5.1 利害關係人資訊揭露與權益影響
 - 應明確告知利害關係人其互動對象是否為 AI 系統
 - 說明 AI 系統可能影響的範疇（如信用評分、投資建議、客戶分群等），並評估影響程度
 - 揭露 AI 所使用的資料來源、模型邏輯與預測或決策流程
 - 若 AI 系統出現錯誤，應有明確的責任歸屬機制與處理流程
 - 提供利害關係人申訴或異議的方式與聯絡窗口
 
-#### 4.2 透明性揭露以彌補解釋性不足
+#### 5.2 透明性揭露以彌補解釋性不足
 
-#### 4.3 AI 系統透明性與通知機制
+#### 5.3 AI 系統透明性與通知機制
 
 - 若使用 AI 輔助決策，應主動以簡明語言通知客戶 AI 的參與與影響
 - 用語淺白易懂說明 AI 如何影響建議生成，幫助客戶理解來源
 - 多元揭露管道即時說明
 
-#### 4.4 AI 系統訓練與資料管理
+#### 5.4 AI 系統訓練與資料管理
 
 - 書面化紀錄資料來源、收集時間、消費者同意方式（如電子簽署）、資料字典等
 - 資料字典內容(包含變數名稱、來源、單位、計算方式、使用目的等)儲存於中央資料庫並定期更新。

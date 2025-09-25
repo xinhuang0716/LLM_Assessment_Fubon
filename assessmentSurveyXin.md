@@ -24,7 +24,33 @@ https://saif.google/secure-ai-framework/risks
 |Insecure Model Output|
 |Rogue Actions|
 
-### 1-2. Microsoft - The basics of Azure AI Foundry risk and safety evaluations
+### 1-2. Google - Model Card (Evaluation)
+
+https://ai.google.dev/gemma/docs/core/model_card_3
+
+- Ethics and Safety
+
+    ||Desc|
+    |---|---|
+    |Category|Child Safety, Content Safety, Representational Harms, Memorization, Large-scale Harms|
+    |Benchmarks|RealToxicity, CrowS-Pairs, BBQ Ambig, BBQ Disambig, Winogender, TruthfulQA, Winobias 1_2, Winobias 2_2, Toxigen|
+
+- Dangerous Capability
+
+    |Capability|Evaluation|
+    |---|---|
+    |Offensive cybersecurity|InterCode-CTF, Internal CTF, Hack the Box|
+    |Self-proliferation|Self-proliferation|
+    |Persuasion|Charm offensive, Click Links, Find Info, Run Code, Money talks, Web of Lies|
+
+### 1-3. OpenAI - o3 and o4-mini System Card
+
+|Chapter|Content|
+|---|---|
+|Observed Safety Challenges and Evaluations|Disallowed Content, Jailbreaks, Hallucinations, Multimodal refusals, Person Identification and Ungrounded Inference Evaluations, Fairness and Bias, Jailbreaks through Custom Developer Messages, Image Generation, Third Party Assessments|
+| Preparedness| Capabilities Assessment, Biological and Chemical, Cybersecurity, AI Self-improvement, Safeguards|
+
+### 1-4. Microsoft - The basics of Azure AI Foundry risk and safety evaluations
 
 https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/safety-evaluations-transparency-note
 
@@ -36,7 +62,7 @@ https://microsoft.github.io/eureka-ml-insights/
 |Protected material content|
 |Jailbreak|
 
-## 1-3. Nvidia - Garak / Safeguard Agentic AI Systems with the NVIDIA Safety Recipe
+## 1-5. Nvidia - Garak / Safeguard Agentic AI Systems with the NVIDIA Safety Recipe
 
 https://github.com/NVIDIA/garak
 
@@ -65,7 +91,7 @@ https://developer.nvidia.com/blog/safeguard-agentic-ai-systems-with-the-nvidia-s
 |snowball|利用複雜問題誘導模型產生錯誤答案，模擬「滾雪球式幻覺」。|
 |xss|測試模型是否會產生跨站攻擊（XSS）相關的漏洞或程式碼。|
 
-### 1-4. OWASP Top 10 for LLM Applications 2025
+### 1-6. OWASP Top 10 for LLM Applications 2025
 
 https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/
 
@@ -82,7 +108,7 @@ https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/
 |Misinformation|
 |Unbounded Consumption|
 
-### 1-5. Elastic Security Lab
+### 1-7. Elastic Security Lab
 
 https://www.cit-sys.co.uk/wp-content/uploads/2024/11/elastic-security-labs-llm-safety-assessment-2024-1.pdf
 
@@ -99,7 +125,7 @@ https://www.cit-sys.co.uk/wp-content/uploads/2024/11/elastic-security-labs-llm-s
 |Overreliance|
 |Model theft|
 
-### 1-6. HuggingFace Safety Leaderboard (from UIUC - AI Secure)
+### 1-8. HuggingFace Safety Leaderboard (from UIUC - AI Secure)
 
 https://huggingface.co/spaces/AI-Secure/llm-trustworthy-leaderboard
 
@@ -114,7 +140,7 @@ https://huggingface.co/spaces/AI-Secure/llm-trustworthy-leaderboard
 |Machine Ethics|
 |Fairness|
 
-### 1-7. Confident AI
+### 1-9. Confident AI
 
 https://github.com/confident-ai/deepeval
 
@@ -127,13 +153,13 @@ https://github.com/confident-ai/deepeval
 |Business	|Misinformation, IntellectualProperty, Competition	|Threats to organizational integrity, reputation, legal standing, and competitive positioning. Includes IP leakage, false information, and competitive data exposure.|
 |Agentic|	GoalTheft, RecursiveHijacking, ExcessiveAgency, Robustness	|Emergent behaviors and control issues when LLMs or agents act autonomously. Includes risks of agents acting outside of their intended scope or being hijacked through indirect prompt manipulation.|
 
-### 1-8. 安永
+### 1-10. 安永
 
 - 除了模型的準確性和效能，還應選擇已「對抗性訓練」(adversarial training)的模型，以避免外部威脅造成的錯誤判斷。如一些模型會自帶防止對抗性樣本攻擊的功能，減少不當輸入對模型預測的影響、強化資料管控降低資料外洩
 
 - 可針對敏感資料進行加密(如使用AES 或 RSA技術)，並設置分層存取權限控制，確保只有特定的授權人員可以檢視和操作敏感資料，同時進行資料存取記錄。
 
-### 1-9. Other References
+### 1-11. Other References
 
 - [ACL 2025 Tutorial - Guardrails and Security for LLMs:
 Safe, Secure, and Controllable Steering of LLM Applications](https://llm-guardrails-security.github.io/)
