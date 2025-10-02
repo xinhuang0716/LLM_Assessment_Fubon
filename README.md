@@ -1,3 +1,6 @@
+安全性共編連結
+https://fubono365japan-my.sharepoint.com/:x:/r/personal/tom_h_huang_fubon_com/_layouts/15/Doc.aspx?sourcedoc=%7BA5D595DA-0F2B-43B5-87AF-62D28A565FC4%7D&file=LLM_Safety_Risk_Categorization.xlsx&action=default&mobileredirect=true
+
 ## Task
 
 1. 設計評測指標：安全性、可靠性（穩定性）、可解釋性、透明性
