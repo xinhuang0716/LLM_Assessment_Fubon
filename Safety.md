@@ -20,7 +20,6 @@
 |---|---|---|
 |1. Content Safety|Fairness and Bias|2, 3, 4|
 |1. Content Safety|Toxicity|2, 3, 4|
-|1. Content Safety|Other|2|
 |2. Information Disclosure|Sensitive Data Disclosure|1, 2, 5|
 |2. Information Disclosure|System Leakage|5|
 |2. Information Disclosure|Other|1|
@@ -45,14 +44,14 @@
 
 ### 3-1-1 Fairness and Bias
 
+Stereotypes such as those related to `Race`, `Religion`, `Age`, `Occupation`, and so on.
+
 |Benchmark|Metric|
 |---|---|
-|CrowS-Pairs||
-|BBQ Ambig||
-|BBQ Disambig||
-|Winogender||
-|Winobias 2_2||
-|Winobias 1_2||
+|CrowS-Pairs|Bias Score = % of examples where stereotype sentence is preferred|
+|BBQ|Accuracy (Ambig/Disambig)|
+|Winogender|Gender Consistency Score (she/he/they)|
+|Winobias|Stereotype Gap = Accuracy(pro) - Accuracy(anti)|
 
 |Approach|Desc|
 |---|---|
@@ -66,32 +65,32 @@
 
 ### 3-1-2 Toxicity
 
-Like `Sexual` and `Violence`, 
+Like `Sexual`, `Violence`, `Self-harm-related`, `illicit` and so on.
 
 |Benchmark|Metric|
 |---|---|
-|RealToxicity||
-|Toxigen||
+|RealToxicity|Maximum Toxicity, Empirical Toxicity Probability(>= 0.5)，使用 PERSPECTIVE API|
+|Toxigen|Toxigen Score (%)，使用 toxigen_roberta 或 HateBERT 判斷|
+|OpenAI - Standard Disallowed Content Evaluations|拒答率(not_unsafe, not_overrefuse)|
+|OpenAI - Production Benchmarks|拒答率(not_unsafe, not_overrefuse)|
+
+P.S. OpenAI 的兩個 Benchmark 似乎無提供公開的衡量資料集
 
 |Approach|Desc|
 |---|---|
+|ConversationAI - PERSPECTIVE API|This API provides scores indicating whether the content contains toxicity, threats, insults, and similar harmful elements. The scores range from 0 to 1.|
 |Azure AI Evaluation - SexualEvaluator|同上 Azure AI Evaluation|
 |Azure AI Evaluation - ViolenceEvaluator|同上 Azure AI Evaluation|
-
-- [RealToxicity](https://arxiv.org/abs/2009.11462)
-- [Toxigen](https://arxiv.org/abs/2203.09509)
-- [Azure AI Evaluation - SexualEvaluator](https://learn.microsoft.com/en-us/python/api/azure-ai-evaluation/azure.ai.evaluation.sexualevaluator?view=azure-python)
-- [Azure AI Evaluation - ViolenceEvaluator](https://learn.microsoft.com/en-us/python/api/azure-ai-evaluation/azure.ai.evaluation.violenceevaluator?view=azure-python)
-
-### 3-1-3 Other
-
-Like `Self-harm-related`, the output content pertaining to physical actions intended to hurt, injure, or damage one's body or kill oneself.
-
-|Approach|Desc|
-|---|---|
 |Azure AI Evaluation - SelfHarmEvaluator|同上 Azure AI Evaluation|
 
+- [RealToxicity](https://arxiv.org/abs/2009.11462)
+- [Toxigen](https://github.com/microsoft/TOXIGEN)
+- [OpenAI - Safety Evaluations Hub](https://openai.com/zh-Hant/safety/evaluations-hub/)
+- [ConversationAI - PERSPECTIVE API](https://github.com/conversationai/perspectiveapi)
+- [Azure AI Evaluation - SexualEvaluator](https://learn.microsoft.com/en-us/python/api/azure-ai-evaluation/azure.ai.evaluation.sexualevaluator?view=azure-python)
+- [Azure AI Evaluation - ViolenceEvaluator](https://learn.microsoft.com/en-us/python/api/azure-ai-evaluation/azure.ai.evaluation.violenceevaluator?view=azure-python)
 - [Azure AI Evaluation - SelfHarmEvaluator](https://learn.microsoft.com/en-us/python/api/azure-ai-evaluation/azure.ai.evaluation.selfharmevaluator?view=azure-python)
+- [Google AI for Developer - Academic benchmarks to evaluate responsibility metrics](https://ai.google.dev/responsible/docs/evaluation?hl=zh-tw)
 
 ### 3-2-1 Sensitive Data Disclosure
 
@@ -122,6 +121,18 @@ Like `Self-harm-related`, the output content pertaining to physical actions inte
 ### Safety Indicators Raw Data
 
 [共編 Excel 連結 🔗](https://fubono365japan-my.sharepoint.com/:x:/r/personal/tom_h_huang_fubon_com/_layouts/15/Doc.aspx?sourcedoc=%7BA5D595DA-0F2B-43B5-87AF-62D28A565FC4%7D&file=LLM_Safety_Risk_Categorization.xlsx&action=default&mobileredirect=true)
+
+### Other Reference Sources
+- [Elastic Security Lab - 2024 LLM Safety Assessment The Definitive Guide on Avoiding Risk and Abuses](https://www.cit-sys.co.uk/wp-content/uploads/2024/11/elastic-security-labs-llm-safety-assessment-2024-1.pdf)
+- [UIUC - AI Secure](https://huggingface.co/spaces/AI-Secure/llm-trustworthy-leaderboard)
+- [知乎 - 大模型安全评估——LLMs Evaluation in Safety](https://zhuanlan.zhihu.com/p/2534134145)
+- [LLM Safety 最新论文推介 - 2025.7.30(2)](https://zhuanlan.zhihu.com/p/1933792417364022202)
+- [Apollo Research and OpenAI - Anti-Scheming](https://www.antischeming.ai/)
+
+- 安永
+    ```
+    除了模型的準確性和效能，還應選擇已「對抗性訓練」(adversarial training)的模型，以避免外部威脅造成的錯誤判斷。如一些模型會自帶防止對抗性樣本攻擊的功能，減少不當輸入對模型預測的影響、強化資料管控降低資料外洩
+    ```
 
 ### Assessment Tools
 
