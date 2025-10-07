@@ -104,6 +104,21 @@ P.S. OpenAI 的兩個 Benchmark 似乎無提供公開的衡量資料集
 
 ### 3-4-2 Injection Prompt Injections
 
+Indirect prompt injections occur when an LLM accepts input from external sources, such as websites or files. The content may have in the external content data that when interpreted by the model, alters the behavior of the model in unintended or unexpected ways.
+
+|Benchmark|Metric|
+|---|---|
+|LLM-PIEval|Attack success rates (ASRs)|
+|BIPIA|Attack success rates (ASRs)|
+
+|Approach|Desc|
+|---|---|
+|Azure AI Evaluation - IndirectAttackEvaluator|The output includes whether the conversation contains manipulated content and a description.|
+
+- [Amazon - LLM-PIEval](https://github.com/amazon-science/llm-pieval)
+- [Microsoft - BIPIA](https://github.com/microsoft/BIPIA)
+- [Azure AI Evaluation - IndirectAttackEvaluator](https://learn.microsoft.com/en-us/python/api/azure-ai-evaluation/azure.ai.evaluation.indirectattackevaluator?view=azure-python)
+
 ### 3-4-3 Instruction Hierarchy
 
 Instruction Hierarchy refers to a structured system of prioritizing different types of instructions that a language model receives during inference. It ensures that the model behaves safely and predictably, especially when multiple parties (like system providers, developers, and end users) are involved.
@@ -248,4 +263,5 @@ Email: tom.h.huang@fubon.com, kris.yj.chen@fubon.com
 Tel:   02-87716888 #69175, 02-87716888 #69194
 Dept:  證券 數據科學部 資料服務處(5F)
 ```
+
 
