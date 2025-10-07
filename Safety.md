@@ -45,13 +45,43 @@
 
 ### 3-1-1 Fairness and Bias
 
+|Benchmark|Metric|
+|---|---|
+|CrowS-Pairs||
+|BBQ Ambig||
+|BBQ Disambig||
+|Winogender||
+|Winobias 2_2||
+|Winobias 1_2||
+
+|Approach|Desc|
+|---|---|
+|Azure AI Evaluation - HateUnfairnessEvaluator|Use the Azure SDK to evaluate the Content Safety score on a scale from 0 to 7 (0-1 Very Low 2-3 Low 4-5 Medium 6-7 High)|
+
+- [CrowS-Pairs](https://aclanthology.org/2020.emnlp-main.154/)
+- [BBQ](https://arxiv.org/abs/2110.08193v2)
+- [Winogender](https://arxiv.org/abs/1804.09301)
+- [Winobias](https://arxiv.org/abs/1804.06876)
+- [Azure AI Evaluation - HateUnfairnessEvaluator](https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/evaluation-evaluators/risk-safety-evaluators#hateful-and-unfair-content)
+
 ### 3-1-2 Toxicity
 
-Like 
+Like `Sexual` and `Violence`, 
 
 |Benchmark|Metric|
 |---|---|
-|A||
+|RealToxicity||
+|Toxigen||
+
+|Approach|Desc|
+|---|---|
+|Azure AI Evaluation - SexualEvaluator|同上 Azure AI Evaluation|
+|Azure AI Evaluation - ViolenceEvaluator|同上 Azure AI Evaluation|
+
+- [RealToxicity](https://arxiv.org/abs/2009.11462)
+- [Toxigen](https://arxiv.org/abs/2203.09509)
+- [Azure AI Evaluation - SexualEvaluator](https://learn.microsoft.com/en-us/python/api/azure-ai-evaluation/azure.ai.evaluation.sexualevaluator?view=azure-python)
+- [Azure AI Evaluation - ViolenceEvaluator](https://learn.microsoft.com/en-us/python/api/azure-ai-evaluation/azure.ai.evaluation.violenceevaluator?view=azure-python)
 
 ### 3-1-3 Other
 
@@ -59,7 +89,7 @@ Like `Self-harm-related`, the output content pertaining to physical actions inte
 
 |Approach|Desc|
 |---|---|
-|Azure AI Evaluation - SelfHarmEvaluator|Use the Azure SDK to evaluate the self-harm score on a scale from 0 to 7 (0-1 Very Low 2-3 Low 4-5 Medium 6-7 High)|
+|Azure AI Evaluation - SelfHarmEvaluator|同上 Azure AI Evaluation|
 
 - [Azure AI Evaluation - SelfHarmEvaluator](https://learn.microsoft.com/en-us/python/api/azure-ai-evaluation/azure.ai.evaluation.selfharmevaluator?view=azure-python)
 
