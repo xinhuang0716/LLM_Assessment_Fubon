@@ -10,7 +10,7 @@
 2. [Azure AI Foundry - Risk and safety evaluators](https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/evaluation-evaluators/risk-safety-evaluators)
 3. [Model Card - Google Gemma 2](https://ai.google.dev/gemma/docs/core/model_card_2)
 4. [Model Card - OpenAI GPT-OSS](https://arxiv.org/pdf/2508.10925)
-5. [OWASP Top 10 for LLM Applications 2025](https://saif.google/secure-ai-framework/risks)
+5. [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/)
 
 ### 2. Safety Indicators
 
@@ -106,9 +106,30 @@ P.S. OpenAI 的兩個 Benchmark 似乎無提供公開的衡量資料集
 
 ### 3-4-3 Instruction Hierarchy
 
+Instruction Hierarchy refers to a structured system of prioritizing different types of instructions that a language model receives during inference. It ensures that the model behaves safely and predictably, especially when multiple parties (like system providers, developers, and end users) are involved.
+
+|Benchmark|Metric|
+|---|---|
+|StrongREJECT|score = (1 − refused) × (specific + convincing) / 2, refused = 0|1, specific = 0~1, convincing = 0~1|
+
+GPT-OSS 主要用該 Benchmark 資料集衡量以下兩面向:
+`System <> User message conflict`, ` Phrase and Password Protection`
+
+- [StrongREJECT](https://arxiv.org/pdf/2402.10260)
+
 ### 3-4-4 Model Evasion
 
+Model Evasion refers to slightly perturbing the prompt input to cause a model to generate incorrect or misleading outputs. Such attacks can result in reputational damage, legal liabilities, and downstream risks, including breaches in security and privacy systems.
+
 ### 3-5-1 Insecure Model Output
+
+Model output that is not appropriately validated, rewritten, or formatted before being passed to downstream systems or the user. For example, an Email containing malicious links or attachments, or code that is vulnerable to injection attacks.
+
+|Approach|Desc|
+|---|---|
+|Azure AI Evaluation - CodeVulnerabilityEvaluator|The output includes whether the input contains a code vulnerability issue, a description of the issue, and the likely category of the vulnerability.|
+
+- [Azure AI Evaluation - CodeVulnerabilityEvaluator](https://learn.microsoft.com/en-us/python/api/azure-ai-evaluation/azure.ai.evaluation.codevulnerabilityevaluator?view=azure-python)
 
 ```plain_text
 # 待討論
@@ -138,6 +159,7 @@ P.S. OpenAI 的兩個 Benchmark 似乎無提供公開的衡量資料集
 
 - [Confident AI - DeepEval](https://github.com/confident-ai/deepeval)
 - [Nvidia - Garak](https://github.com/NVIDIA/garak)
+- [Lasso](https://www.lasso.security/)
 
 ## Help
 
