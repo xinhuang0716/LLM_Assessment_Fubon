@@ -100,6 +100,17 @@ P.S. OpenAI 的兩個 Benchmark 似乎無提供公開的衡量資料集
 
 ### 3-3-1 Misinformation
 
+One of the major causes of misinformation is hallucination—when the LLM generates content that seems accurate but is fabricated.
+
+|Dataset|Desc|Remark|
+|---|---|---|
+|SimpleQA|SimpleQA⁠ is a diverse dataset of four thousand fact-seeking questions with short answers and measures model accuracy for attempted answers.|[github](https://github.com/openai/simple-evals)|
+|PersonQA|PersonQA is a dataset of questions and publicly available facts about people that measures the model’s accuracy on attempted answers.|沒找到Dataset，可能尚未開源|
+|HaluEval|HaluEval includes 5,000 general user queries with ChatGPT responses and 30,000 task-specific examples from three tasks, i.e., question answering, knowledge-grounded dialogue, and text summarization.|[github](https://github.com/RUCAIBox/HaluEval)|
+|LLMFake|construct a LLM-generated misinformation dataset LLMFake with different LLM generators and generation approaches|[github](https://github.com/llm-misinformation/llm-misinformation)|
+
+- [Azure AI Evaluation - Ungrounded attributes](https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/evaluation-evaluators/risk-safety-evaluators#ungrounded-attributes)
+
 ### 3-4-1 Direct Prompt Injections
 
 ### 3-4-2 Injection Prompt Injections
@@ -263,5 +274,6 @@ Email: tom.h.huang@fubon.com, kris.yj.chen@fubon.com
 Tel:   02-87716888 #69175, 02-87716888 #69194
 Dept:  證券 數據科學部 資料服務處(5F)
 ```
+
 
 
