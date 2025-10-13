@@ -29,6 +29,29 @@
 	- Needle In A Haystack (NIAH): 測試模型在極長文件（例如 200K Tokens）中間檢索和回憶特定資訊的準確性
 	- LOFT, MRCR-V2: 評估模型在 1M 或更長上下文中的困難檢索任務和多針檢索能力
 
+模型選用組選擇評測資料:
+
+|Type|Benchmark|Desc|Dataset|Evaluation script|
+|---|---|---|---|---|
+|通用知識與語言理解|[MMLU](https://arxiv.org/abs/2009.03300)|評估模型在多任務環境下的語言理解與問題解決能力|[huggingface](https://huggingface.co/datasets/cais/mmlu) [github](https://github.com/hendrycks/test)|同左|
+|通用知識與語言理解|[MMLU-Pro](https://arxiv.org/abs/2406.01574)|評估模型在多任務環境下的語言理解與問題解決能力|[huggingface](https://huggingface.co/datasets/TIGER-Lab/MMLU-Pro)|同左|
+|通用知識與語言理解|[Humanity’s Last Exam](https://arxiv.org/abs/2501.14249)|旨在評估模型在人類知識前沿的能力。|[huggingface](https://huggingface.co/datasets/cais/hle)|[github](https://github.com/centerforaisafety/hle)|
+|通用知識與語言理解|AA-LCR (Artificial Analysis Long Context Reasoning)|衡量模型長上下文處理實用性的重要指標|[huggingface](https://huggingface.co/datasets/ArtificialAnalysis/AA-LCR) |沒找到|
+|數學與邏輯推理|AIME|具挑戰性的競賽級數學問題基準 。它們要求模型具備深度邏輯、抽象思維和複雜的符號操作能力，能有效檢驗模型的推理上限 。|||
+|數學與邏輯推理|MATH-500|具挑戰性的競賽級數學問題基準 。它們要求模型具備深度邏輯、抽象思維和複雜的符號操作能力，能有效檢驗模型的推理上限 。|[huggingface](https://huggingface.co/datasets/HuggingFaceH4/MATH-500)||
+|程式碼生成|HumanEval|用於評估模型的程式碼生成能力。|[huggingface](https://huggingface.co/datasets/openai/openai_humaneval)||
+|程式碼生成|[SWE-bench](https://arxiv.org/abs/2310.06770)|這個基準超越了單一函式的生成，要求模型解決來自真實 GitHub 開源專案的問題 (issues) |[huggingface](https://huggingface.co/datasets/princeton-nlp/SWE-bench_Verified)|[github](https://github.com/SWE-bench/SWE-bench)|
+|對話與指令遵循|MT-Bench|專為評估模型在多輪對話中的能力(but現行資料不好找到現成指標)|
+|對話與指令遵循|Chatbot Arena|透過讓真人使用者對兩個匿名模型的回答進行投票，來產生一個類似於棋類比賽的 Elo 評分 。這個分數被廣泛認為是衡量模型在真實世界對話中的實用性與人類偏好的黃金標準|
+
+欲新增評測資料:
+
+|Type|Benchmark|Desc|Dataset|Evaluation script|
+|---|---|---|---|---|
+|通用知識與語言理解|[C-Eval](https://arxiv.org/abs/2305.08322)|評估模型在中文環境下的進階知識和推理能力，包含 52 個學科的考試|[github](https://github.com/hkust-nlp/ceval) [huggingface](https://huggingface.co/datasets/ceval/ceval-exam)|[github](https://github.com/hkust-nlp/ceval)|
+|通用知識與語言理解|MMMLU|OpenAI將MMLU翻譯成多國語言|[huggingface](https://huggingface.co/datasets/openai/MMMLU)|同MMLU|
+|指令遵循|[Multi-IF](https://arxiv.org/abs/2410.15553)|MetaAI提出，針對8種語言測試多輪對話指令遵循能力，[Qwen3](https://arxiv.org/abs/2505.09388) paper中評測項目|[huggingface](https://huggingface.co/datasets/facebook/Multi-IF)|[github](https://github.com/facebookresearch/Multi-IF)|
+
 ### 一致性 (Consistency)
 
 - 將相同的 Prompt 輸入給模型 N 次（例如 5 次），比較這 N 次輸出的語意相似度。
