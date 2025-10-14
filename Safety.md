@@ -93,10 +93,29 @@ P.S. OpenAI 的兩個 Benchmark 似乎無提供公開的衡量資料集
 - [Google AI for Developer - Academic benchmarks to evaluate responsibility metrics](https://ai.google.dev/responsible/docs/evaluation?hl=zh-tw)
 
 ### 3-2-1 Sensitive Data Disclosure
+|DataSet|Metric|
+|---|---|
+|AI4Privacy/PII-Masking-300K||
+|Faker||
 
+- [AI4Privacy/PII-Masking-300K](https://huggingface.co/datasets/ai4privacy/pii-masking-300k) : The dataset is useful to train and evaluate models to remove personally identifiable and sensitive information from text.
+- [Faker](https://pypi.org/project/Faker/) : 可使用Faker套件隨機生成個資
+
+|Approach|Desc|
+|---|---|
+|DeepTeam - PII Leakage|The enhancement or progression (depending on the attack) is evaluated using the PIIMetric, which generates a binary score (0 if vulnerable and 1 otherwise). The PIIMetric also generates a reason justifying the assigned score.|
+
+- [DeepTeam - PII Leakage](https://www.trydeepteam.com/docs/red-teaming-vulnerabilities-pii-leakage)
+- [Microsoft - Presidio](https://github.com/microsoft/presidio-research) : 提供PII偵測的模組
 ### 3-2-2 System Leakage
 
+|Approach|Desc| 
+|---|---| 
+|DeepTeam - Prompt Leakage|The enhancement or progression (depending on the attack) is evaluated using the PromptExtractionMetric, which generates a binary score (0 if vulnerable and 1 otherwise). The PromptExtractionMetric also generates a reason justifying the assigned score.|
+|||
 ### 3-2-3 Other
+Inferred Sensitive Data : The model may be able to infer information about people (gender, political affiliation, or sexual orientation) based on their inputs and responses from integrated plugins.  
+與 3-2-1 Sensitive Data Disclosure 採相同方式評估
 
 ### 3-3-1 Misinformation
 
@@ -112,6 +131,28 @@ One of the major causes of misinformation is hallucination—when the LLM genera
 - [Azure AI Evaluation - Ungrounded attributes](https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/evaluation-evaluators/risk-safety-evaluators#ungrounded-attributes)
 
 ### 3-4-1 Direct Prompt Injections
+
+|DataSet|Metric|
+|---|---|
+|Qualifire - Prompt Injection Benchmark||
+|Deepset - Prompt Injection||
+|JailbreakBench - JBB-Behaviors||
+|Harmbench||
+
+
+- [Qualifire - Prompt Injection Benchmark](https://huggingface.co/datasets/qualifire/prompt-injections-benchmark)  
+- [Deepset - Prompt Injection](https://huggingface.co/datasets/deepset/prompt-injections)
+- [JailbreakBench - JBB-Behaviors](https://huggingface.co/datasets/JailbreakBench/JBB-Behaviors)
+- [Harmbench](https://github.com/centerforaisafety/HarmBench/tree/main/data/behavior_datasets)
+
+
+|Approach|Desc| 
+|---|---| 
+|JailbreakBench|JailbreakBench is an open-source benchmark for testing LLMs' resistance to jailbreak attacks, featuring adversarial prompts, behavior datasets, evaluation tools, and a public leaderboard.|
+|PINT Benchmark|The Prompt Injection Test (PINT) Benchmark provides a neutral way to evaluate the performance of a prompt injection detection system|
+
+- [PINT Benchmark](https://github.com/lakeraai/pint-benchmark/tree/main)
+- [JailbreakBench](https://arxiv.org/abs/2404.01318)
 
 ### 3-4-2 Injection Prompt Injections
 
@@ -274,6 +315,7 @@ Email: tom.h.huang@fubon.com, kris.yj.chen@fubon.com
 Tel:   02-87716888 #69175, 02-87716888 #69194
 Dept:  證券 數據科學部 資料服務處(5F)
 ```
+
 
 
 
