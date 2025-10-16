@@ -8,7 +8,7 @@
 | 來源引用與證據支持|Citation Presence, Citation Validity|TruthfulQA, FEVER, SciFact|
 | 語意一致性|Alignment Score|TruthfulQA, FEVER, SciFact|
 |可模擬性|Simulatability Precision|自建反事實資料集|
-#### 1. 步驟存在率
+#### 1. 步驟存在率 v
 檢視回覆是否包含Chain-of-Thought結構化步驟，可提供數學與邏輯推理問題，如**GSM8K、SVAMP、ASDiv、AQuA、MAWPS**等問題類型。也可偵測關鍵字，檢視回覆中是否包含「首先」、「接著」、「因此」等邏輯詞，去判斷回覆是否有CoT結構  
 
 $\text{CoT Presence Rate} = \frac{\#含明確步驟的回答}{\#題目}$
@@ -17,7 +17,7 @@ $\text{CoT Presence Rate} = \frac{\#含明確步驟的回答}{\#題目}$
 *Ref: [Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
 ](https://arxiv.org/abs/2201.11903)*(2023)  
 
-#### 2. 引用源提供率  
+#### 2. 引用源提供率  v
 模型是否在回答中提供明確的證據來源
 
 $\text{Citation Presence} = \frac{\text{\#提供引用源的回答}}{\text{\#需要來源的問題}}$
@@ -27,7 +27,7 @@ $\text{Citation Presence} = \frac{\text{\#提供引用源的回答}}{\text{\#需
 
 $\text{Citation Validity} = \frac{\text{\#有效引用源}}{\text{\#提供引用源}}$
 
-#### 4. 答案與證據對齊分數
+#### 4. 答案與證據對齊分數 v
 答案的核心敘述與引用進行語意相似度辨識  
 
 *Example*:   
@@ -134,3 +134,4 @@ $\text{Resilience} = 1-\frac{\#被成功注入案例}{\#總測例}$
 [CrowS-Pairs](https://github.com/nyu-mll/crows-pairs): The dataset consists of 1,508 examples covering nine types of biases.  
 
 [BOLD](https://github.com/amazon-science/bold):  A dataset to evaluate fairness in open-ended language generation in English language.
+
