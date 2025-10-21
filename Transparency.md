@@ -1,5 +1,3 @@
-https://06d450f2e2d24342b7f5b16522145547.svc.dynamics.com/EvtMgmt/api/v2.0/checkin/stream?sessionRegistrationId=SR 8UCC5E9GZJB9EY4U9KPAEA6XUF&redirectUri=https%3A%2F%2Fteams.microsoft.com%2Fl%2Fmeetup-join%2F19%253ameeting_MDc1MGVjY2YtYjI2Zi00OTg0LWI2NDMtNzY1ZmJlMDE4MzRl%2540thread.v2%2F0%3Fcontext%3D%257b%2522Tid%2522%253a%252272f988bf-86f1-41af-91ab-2d7cd011db47%2522%252c%2522Oid%2522%253a%2522c5825cfd-a05b-4288-8c3d-cec2cf365dd6%2522%257d
-
 # Transparency Survey
 
 ## How to Assessment
@@ -262,4 +260,5 @@ Email: tom.h.huang@fubon.com
 Tel:   02-87716888 #69175
 Dept:  證券 數據科學部 資料服務處(5F)
 ```
+
 
