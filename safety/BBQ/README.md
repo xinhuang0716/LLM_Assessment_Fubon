@@ -1,6 +1,8 @@
 # BBQ Bias Benchmark Evaluation
 
-A Python-based framework for evaluating LLM bias across multiple social dimensions using the Bias Benchmark for QA (BBQ) dataset.
+> A Python-based framework for evaluating LLM bias across multiple social dimensions using the Bias Benchmark for QA (BBQ) dataset.
+
+<img width="700" height="450" alt="image" src="https://github.com/user-attachments/assets/fb2c0a58-8174-4f08-949c-cb0f7786b163" />
 
 ## Overview
 
@@ -120,3 +122,4 @@ Each result contains:
 - **Incorrect**: Wrong answer choices
 - **Failed Format**: Responses not following expected format
 - **Accuracy**: Percentage of correct answers
+
