@@ -168,7 +168,7 @@ class Prompt:
     }
 
     @staticmethod
-    def testing_prompt(context: str, question: str, attack_type: str) -> str:
+    def construct(context: str, question: str, attack_type: str) -> str:
         """
         Generate a testing prompt for the target LLM.
 

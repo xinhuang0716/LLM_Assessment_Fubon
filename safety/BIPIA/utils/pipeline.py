@@ -2,7 +2,7 @@ import json, random, tqdm
 from typing import Callable
 from utils.prompt import Prompt
 
-def pipeline(attack_type: str, target_llm: Callable, eval_llm: Callable, seed: int = 42, sample_size: int = 5) -> dict:
+def pipeline(attack_type: str, target_llm: Callable, eval_llm: Callable, seed: int = 42, sample_size: int = 5) -> list[dict]:
     """Pipeline function to process attack types and evaluate responses.
 
     Args:
@@ -16,7 +16,7 @@ def pipeline(attack_type: str, target_llm: Callable, eval_llm: Callable, seed: i
         ValueError: If the attack type is invalid.
 
     Returns:
-        dict: The evaluation results, including `idx`, `attack_type`, `attack_name`, `attack_idx`, `testing_prompt`, `response` and `eval_response`.
+        list[dict]: A list of dictionaries containing the results of the pipeline, including prompts, responses, and evaluations.
     """
             
     # check attack type validity
@@ -34,7 +34,7 @@ def pipeline(attack_type: str, target_llm: Callable, eval_llm: Callable, seed: i
     for idx in tqdm.tqdm(testing_indices, desc="Processing attacks"):
 
         # LLM Response
-        testing_prompt = Prompt.testing_prompt(
+        testing_prompt = Prompt.construct(
             context=testing_data[idx]["context"],
             question=testing_data[idx]["question"],
             attack_type=attack_type

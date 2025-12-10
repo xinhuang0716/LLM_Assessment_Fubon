@@ -5,6 +5,7 @@ from utils.pipeline import pipeline
 
 
 def main():
+    
     # assessment pipeline
     attack_type = "email"
     result = pipeline(attack_type=attack_type, target_llm=ollama_response, eval_llm=gemini_response, sample_size=3)

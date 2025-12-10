@@ -1,12 +1,12 @@
 import requests
 
 
-def gemini_response(prompt: str, api_key: str = "", model: str = "gemini-2.0-flash", url: str = "https://generativelanguage.googleapis.com/v1beta/models") -> str:
+def gemini_response(prompt: str, api_key: str = "AIzaSyAYzVEHXwD9wpZhkN4exjOeyuQ6ZcspVHA", model: str = "gemini-2.0-flash", url: str = "https://generativelanguage.googleapis.com/v1beta/models") -> str:
     """Gets a response from the Gemini LLM.
 
     Args:
         prompt (str): Prompt to send to the model.
-        api_key (str, optional): API key for authentication. Defaults to "".
+        api_key (str, optional): API key for authentication. Defaults to "AIzaSyAYzVEHXwD9wpZhkN4exjOeyuQ6ZcspVHA".
         model (str, optional): The response LLM model. Defaults to "gemini-2.0-flash".
         url (_type_, optional): _description_. Defaults to "https://generativelanguage.googleapis.com/v1beta/models".
 
