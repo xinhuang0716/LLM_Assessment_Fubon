@@ -1,0 +1,13 @@
+[project]
+name = "safety"
+version = "0.1.0"
+description = "A trial project for assessing safety issues with LLM generated content. Especially focused on Bias and IPIA."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "deepteam>=1.0.4",
+    "ollama>=0.6.1",
+    "requests>=2.32.5",
+    "rich>=14.2.0",
+    "tqdm>=4.67.1",
+]
