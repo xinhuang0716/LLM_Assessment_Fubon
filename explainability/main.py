@@ -3,7 +3,7 @@ import warnings
 from datetime import datetime
 from pathlib import Path
 import json
-from core.common.clients import AsyncAzureOAIClient, AsyncGeminiClient
+from core.common.clients import AsyncAzureOAIClient, AsyncGeminiClient, AsyncLlamaClient
 from core.common.paths import data_dir
 from core.pipelines import run_all
 from core.evaluators import ScoreAggregator, ResultProcessor
@@ -41,8 +41,10 @@ async def main():
             cite_judge_llm=cite_judge_llm,
             cot_sample_method="random",
             cot_n_samples=30,
+            cot_random_state = 0,
             citation_sample_method="random",
             citation_n_samples=1,
+            citation_random_state = 0
         )
 
         processor = ResultProcessor()
