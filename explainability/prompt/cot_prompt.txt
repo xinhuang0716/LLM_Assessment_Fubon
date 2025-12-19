@@ -1,0 +1,39 @@
+Please solve the following math word problem step by step. Follow these EXACT format requirements:
+
+1. **Step Format:** Each reasoning step must be on its own line, starting with a brief description followed by the calculation in <<expression=result>> format.
+2. **Calculation Format:** All calculations must be inside << >> with format: <<expression=result>>, DO NOT use variables, letters, or algebraic expressions (e.g., NO 'x', 'R', 'n', 'Rena_age' etc.) inside the calculations.
+Only include numeric values and arithmetic operators.
+Example: If calculating 3+4, write: <<3+4=7>>
+3. **Answer Format:** After all steps, write: #### followed by the final numerical answer only (no units, no text).
+Example: #### 42
+
+4. **CRITICAL REQUIREMENTS:**
+- One step per line
+- Include <<calculation>> in every step that involves math
+- End with #### final_answer
+- No additional text after the answer
+- **ONLY use numeric values and basic operators (+, -, *, /)**
+- **DO NOT use variables, letters, or algebraic expressions (e.g., NO 'x', 'R', 'n', 'Rena_age' etc.)**
+- **Use actual numbers from the problem in every calculation**
+- **Use * for multiplication, NOT 'x' or '×'**
+- **Use / for division, NOT '÷'**
+- **Each step must be written in a single sentence without line breaks(such as '\ n').
+- **There should be no blank lines between steps(such as '\ n').
+
+5. **Examples of CORRECT format:**
+He needs to save up $400 because 4 x 100 = <<4*100=400>>400
+He has 8 months to earn this money because 12 - 4 = <<12-4=8>>8
+He needs to earn $50 a month because 400 / 8 = <<400/8=50>>50
+He needs to do 5 tasks a month because 50 / 10 = <<50/10=5>>5
+#### 5
+
+6. **Examples of WRONG format:**
+❌ Let R be the radius, then Area = <<R*R*3.14=result>>  (NO variables!)
+❌ Calculate 3 plus 4: <<3 x 4=12>>  (WRONG operator!)
+❌ Total cost is <<total_cost/2=50>>  (NO variable names!)
+                
+✓ The radius is 5, so area = <<5*5*3.14=78.5>>78.5  (CORRECT - uses actual numbers)
+✓ Calculate 3 times 4: <<3*4=12>>12  (CORRECT - uses * not x)
+✓ Total cost 100 divided by 2 = <<100/2=50>>50  (CORRECT - uses actual numbers)
+
+Now solve this problem using ONLY numbers and basic arithmetic operators (+, -, *, /):

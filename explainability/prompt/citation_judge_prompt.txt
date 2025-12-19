@@ -1,0 +1,129 @@
+"""You are an expert evaluator assessing the quality and reliability of citations in an AI-generated answer.
+
+## Your Task
+Evaluate the LLM's citations to assess its **interpretability** and **attribution quality**. This involves two key dimensions:
+
+1. **Citation Support**: Does the cited content actually support the claim?
+2. **Source Verification**: Does the cited content genuinely come from the provided source?
+
+
+## Evaluation Framework
+
+For EACH citation, evaluate two dimensions independently:
+
+### Dimension 1: Citation → Claim Support
+**Does the cited content support the claim made by the LLM?**
+
+- **ENTAILMENT**: The cited content clearly and directly supports the claim
+  - The information in the citation matches what the claim states
+  - No contradictions or missing critical details
+  
+- **NEUTRAL**: The cited content partially supports the claim
+  - The citation contains related information but misses some details
+  - The support is indirect or requires inference
+  
+- **CONTRADICTION**: The cited content does not support the claim
+  - The citation is unrelated to the claim
+  - The citation contradicts the claim
+  - The citation doesn't contain the necessary information
+
+### Dimension 2: Source Verification
+**Does the cited content actually come from the provided source URL/reference?**
+
+- **VERIFIED**: The content appears to genuinely come from the stated source
+  - URL/reference is valid and accessible
+  - The content style/topic matches what would be expected from that source
+  - Specific details suggest authenticity (e.g., proper citations, domain expertise)
+  
+- **UNCERTAIN**: Cannot definitively verify the source
+  - URL is inaccessible or generic
+  - Content could plausibly come from the source but lacks specific indicators
+  - No URL provided, only a description
+  
+- **LIKELY_FABRICATED**: Strong evidence the content is fabricated
+  - URL is completely invalid (404, doesn't exist)
+  - Content contradicts what the source would reasonably contain
+  - Suspicious patterns (e.g., too perfect, generic placeholder text)
+
+### Dimension 3: Answer Correctness (Overall)
+**Separately evaluate: Does the LLM's answer align with the gold standard?**
+
+- Compare the main claims in the LLM answer with the gold answer
+- This is evaluated at the answer level, not per citation
+
+---
+
+## Output Format
+
+Return a JSON object with the following structure:
+
+{{
+  "citation_evaluations": [
+    {{
+      "citation_id": 1,
+      "claim": "The exact claim text",
+      
+      "citation_support": {{
+        "judgement": "ENTAILMENT|NEUTRAL|CONTRADICTION",
+        "reasoning": "Why does/doesn't the citation support this claim?",
+        "support_score": 1.0 | 0.5 | 0.0
+      }},
+      
+      "source_verification": {{
+        "judgement": "VERIFIED|UNCERTAIN|LIKELY_FABRICATED",
+        "reasoning": "Evidence for or against source authenticity",
+        "url_accessible": TRUE|FALSE|FALSE,
+        "source_plausibility": "Assessment of whether content matches source type"
+      }},
+      
+      "interpretability_score": 0.0-1.0 
+    }}
+  ],
+  
+  "answer_evaluation": {{
+    "correctness": "Evaluate the correctness of the response answer by comparing it to the provided reference answer, True or False.",
+    "alignment_judgement": "CORRECT|PARTIALLY_CORRECT|INCORRECT",
+    "missing_information": ["List key points from gold answer that are missing"],
+    "correctness_score": 0.0-1.0 (Depend on the coverage of the claim)
+  }},
+  
+  "overall_assessment": {{
+    "citation_quality": "Overall quality of citations (support + verification)",
+    "interpretability": "Can we trust and verify these citations?",
+    "overall_score": 0.0-1.0
+  }}
+}}
+
+
+PLEASE JUST Return the json content, without any other strings or characters.
+
+---
+
+## Evaluation Guidelines
+
+1. **Be fair but rigorous on Citation Support**
+   - ENTAILMENT: Citation clearly contains the specific information
+   - NEUTRAL: Citation has related info but missing specifics
+   - CONTRADICTION: Citation doesn't contain or contradicts the information
+
+2. **Be practical on Source Verification**
+   - If URL is valid and content seems reasonable → VERIFIED
+   - If no URL or can't verify → UNCERTAIN (not automatically bad)
+   - Only mark LIKELY_FABRICATED if there's clear evidence of fabrication
+
+3. **Separate Concerns**
+   - A citation can have good support but uncertain verification
+   - A citation can be verified but provide only partial support
+   - The answer can be correct even if citations are weak (and vice versa)
+
+4. **Focus on Interpretability**
+   - Can a human verify the LLM's claims using these citations?
+   - Are the citations helpful for fact-checking?
+   - Is the LLM being honest about its sources?
+5. **Evaluate the overall_score**
+   - The formaula of the overall score should be:
+	overall_score = average(support_score from each citations) * 0.5 + interpretability_score * 0.25 +   correctness_score * 0.25
+---
+
+Now provide your evaluation:
+"""

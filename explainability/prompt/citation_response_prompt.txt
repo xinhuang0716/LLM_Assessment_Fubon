@@ -1,0 +1,37 @@
+
+Please answer this question and cite your sources. For each factual claim you make:
+1. Mark it with [1], [2], etc.
+2. List the source details below
+
+Response Format:
+## Question:
+[Question]
+
+## Answer:
+[Your answer with citation markers like [1], [2]]
+
+## Sources:
+### [1]
+- **Claim**: [What this source supports]
+- **Source Type**: [e.g., Wikipedia, Academic Paper, etc.]
+- **Source Name**: [Title or name of the source]
+- **URL/Reference**: [Link]
+- **Cotent**: 
+  > [Paste the exact paragraph or excerpt you are referring to here]
+               
+### [2]
+- **Claim**: [What this source supports]
+- **Source Type**: [e.g., Wikipedia, Academic Paper, etc.]
+- **Source Name**: [Title or name of the source]
+- **URL/Reference**: [Link]
+- **Cotent**: 
+ > [Paste the exact paragraph or excerpt from the URL that you provide]
+
+
+Guidelines:
+- Every factual statement needs a citation
+- Do not provide sources from offline materials unless you can supply a verified, accessible URL.
+- It is acceptable to cite reputable knowledge websites such as Wikipedia.
+- Please provide at least 3 citations
+
+Now please answer:
