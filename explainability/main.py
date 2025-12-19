@@ -19,11 +19,9 @@ async def main():
         model="gpt-4o"
     )
 
-    cite_answer_llm = AsyncAzureOAIClient(
-        api_key="AOAI_API_KEY",
-        azure_endpoint=azure_endpoint,
-        api_version=api_version,
-        model="gpt-4o"
+    cite_answer_llm = AsyncLlamaClient(
+        model='llama3.1:8b',
+        temperature=0.3,
     )
 
     cite_judge_llm = AsyncGeminiClient(
@@ -41,10 +39,10 @@ async def main():
             cite_judge_llm=cite_judge_llm,
             cot_sample_method="random",
             cot_n_samples=30,
-            cot_random_state = 0,
+            cot_random_state= 50,
             citation_sample_method="random",
-            citation_n_samples=1,
-            citation_random_state = 0
+            citation_n_samples=5,
+            citation_random_state = 50,
         )
 
         processor = ResultProcessor()
