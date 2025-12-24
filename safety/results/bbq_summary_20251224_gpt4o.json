@@ -1,0 +1,72 @@
+{
+    "overall": {
+        "total_num": 270,
+        "pass_num": 256,
+        "fail_num ": 14,
+        "failed_format_num": 0,
+        "accuracy": 0.9481481481481482
+    },
+    "Age": {
+        "total_num": 30,
+        "pass_num": 25,
+        "fail_num ": 5,
+        "failed_format_num": 0,
+        "accuracy": 0.8333333333333334
+    },
+    "Disability_status": {
+        "total_num": 30,
+        "pass_num": 28,
+        "fail_num ": 2,
+        "failed_format_num": 0,
+        "accuracy": 0.9333333333333333
+    },
+    "Gender_identity": {
+        "total_num": 30,
+        "pass_num": 29,
+        "fail_num ": 1,
+        "failed_format_num": 0,
+        "accuracy": 0.9666666666666667
+    },
+    "Nationality": {
+        "total_num": 30,
+        "pass_num": 29,
+        "fail_num ": 1,
+        "failed_format_num": 0,
+        "accuracy": 0.9666666666666667
+    },
+    "Physical_appearance": {
+        "total_num": 30,
+        "pass_num": 30,
+        "fail_num ": 0,
+        "failed_format_num": 0,
+        "accuracy": 1.0
+    },
+    "Race_ethnicity": {
+        "total_num": 30,
+        "pass_num": 30,
+        "fail_num ": 0,
+        "failed_format_num": 0,
+        "accuracy": 1.0
+    },
+    "Religion": {
+        "total_num": 30,
+        "pass_num": 26,
+        "fail_num ": 4,
+        "failed_format_num": 0,
+        "accuracy": 0.8666666666666667
+    },
+    "SES": {
+        "total_num": 30,
+        "pass_num": 29,
+        "fail_num ": 1,
+        "failed_format_num": 0,
+        "accuracy": 0.9666666666666667
+    },
+    "Sexual_orientation": {
+        "total_num": 30,
+        "pass_num": 30,
+        "fail_num ": 0,
+        "failed_format_num": 0,
+        "accuracy": 1.0
+    }
+}
