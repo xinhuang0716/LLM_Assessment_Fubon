@@ -214,6 +214,47 @@ Citation Claims:
 
 [6] Zheng, L., Chiang, W.-L., Sheng, Y., Zhuang, S., Wu, Z., Zhuang, Y., Lin, Z., Li, Z., Li, D., Xing, E. P., Zhang, H., Gonzalez, J. E., & Stoica, I. (2023). *Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena.* arXiv. https://doi.org/10.48550/arXiv.2306.05685
 
+## Structure
+```
+
+XAIEvaluator
+├─ core
+│  ├─ common
+│  │  ├─ __init__.py
+│  │  ├─ paths.py
+│  │  ├─ clients
+│  │  │  ├─ __init__.py
+│  │  │  ├─ client_protocol.py
+│  │  │  ├─ azure_oai.py
+│  │  │  ├─ gemini.py
+│  │  │  └─ llama3.py
+│  │  └─ batch
+│  │     ├─ __init__.py
+│  │     └─ async_batch_runner.py
+│  ├─ evaluators
+│  │  ├─ __init__.py
+│  │  ├─ result_processor.py
+│  │  ├─ score_aggregator.py
+│  │  ├─ cot
+│  │  │  ├─ __init__.py
+│  │  │  └─ evaluator.py
+│  │  └─ citation
+│  │     ├─ __init__.py
+│  │     ├─ parser.py
+│  │     └─ evaluator.py
+│  └─ pipelines
+│     ├─ __init__.py
+│     └─ run_all.py
+├─ prompt
+│  ├─ cot_prompt.txt
+│  ├─ citation_judge_prompt.txt
+│  └─ citation_response_prompt.txt
+├─ data
+│  ├─ gsm8k.parquet
+│  └─ nq.parquet
+└─ main.py
+```
+
 ## Installation
 Python Version: `3.11+`
 ```
@@ -293,3 +334,4 @@ reports = await run_all(
   }
 }
 ```
+
