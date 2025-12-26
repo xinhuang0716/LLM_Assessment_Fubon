@@ -10,6 +10,11 @@ from BIPIA.pipeline import runEvaluation as runBIPIAEvaluation
 from Toxicity.pipeline import runEvaluation as runToxicityEvaluation
 from Toxicity.customLLM import AzureOpenAI, OllamaDeepEval
 
+from InformationDisclosure.customLLM import AzureOpenAI, OllamaDeepEval
+from InformationDisclosure.pipeline import runEvaluation as runIDEvaluation
+from DirectPromptInjection.customLLM import AzureOpenAI, OllamaDeepEval
+from DirectPromptInjection.pipeline import runEvaluation as runDPIEvaluation
+
 
 def main():
     # Load configurations
@@ -90,6 +95,38 @@ def main():
         except Exception as e:
             print(f"Error during Toxicity Evaluation: {e}")
 
+
+    # Run Evaluation Pipeline - Information Disclosure
+    if config["assessment"].get("run_Information_Disclosure"):
+
+        try:
+            print("Starting Information Disclosure Evaluation...")
+            runIDEvaluation(
+                target_llm=ollama_llm, 
+                sample_size=config["assessment"]["sample_size"],
+                simulator_model=simulator_llm,
+                evaluation_model=evaluator_llm
+            )
+            print("Information Disclosure Evaluation completed!")
+
+        except Exception as e:
+            print(f"Error during Information Disclosure Evaluation: {e}")
+
+    # Run Evaluation Pipeline - Direct Prompt Injection
+    if config["assessment"].get("run_Direct_Prompt_Injection"):
+
+        try:
+            print("Starting Direct Prompt Injection Evaluation...")
+            runDPIEvaluation(
+                target_llm=ollama_llm, 
+                sample_size=config["assessment"]["sample_size"],
+                simulator_model=simulator_llm,
+                evaluation_model=evaluator_llm
+            )
+            print("Direct Prompt Injection Evaluation completed!")
+
+        except Exception as e:
+            print(f"Error during Direct Prompt Injection Evaluation: {e}")
 
 if __name__ == "__main__":
     main()
