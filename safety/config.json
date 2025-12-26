@@ -1,0 +1,21 @@
+{
+  "ollama": {
+    "description": "targetLLM",
+    "model": "llama3.1:8b",
+    "endpoint": "http://172.21.134.121:11434/api/generate"
+  },
+  "aoai": {
+    "description": "evaluateLLM or simulatorLLM",
+    "model": "gpt-4o",
+    "endpoint": "https://oai-ftw-jpe-sit-sandbox-01.openai.azure.com/openai/deployments/gpt-4o/chat/completions?api-version=2024-12-01-preview",
+    "openai_api_version": "2024-12-01-preview",
+    "azure_endpoint": "https://oai-ftw-jpe-sit-sandbox-01.openai.azure.com",
+    "openai_api_key": "YOUR_AZURE_OPENAI_API_KEY"
+  },
+  "assessment": {
+    "sample_size": 2,
+    "run_BBQ": true,
+    "run_BIPIA": false,
+    "run_Toxicity": false
+  }
+}
