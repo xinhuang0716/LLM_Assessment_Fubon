@@ -16,6 +16,8 @@
     "sample_size": 2,
     "run_BBQ": true,
     "run_BIPIA": false,
-    "run_Toxicity": false
+    "run_Toxicity": false,
+    "run_Information_Disclosure": false,
+    "run_Direct_Prompt_Injection": false
   }
 }
