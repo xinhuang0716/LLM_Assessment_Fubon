@@ -25,15 +25,30 @@ python main.py
 Edit in `main.py`
 
 ```python
-MODEL_ID = "Qwen/Qwen2.5-0.5B-Instruct" # Huggingface Model
-OUTPUT_PATH = "outputs" # Output path
+# Select your backend: "ollama" or "azure"
+BACKEND_TYPE = "ollama"
 
-...
+# If using Ollama
+OLLAMA_CONFIG = {
+    "base_url": "http://localhost:11434/v1",
+    "api_key": "ollama", 
+    "model": "llama3.1:8b" 
+}
+
+# If using Azure OpenAI
+AZURE_CONFIG = {
+    "endpoint": "https://YOUR_RESOURCE.openai.azure.com/",
+    "api_key": "YOUR_API_KEY",
+    "api_version": "2025-01-01-preview",
+    "deployment_name": "gpt-4o"
+}
+
+
 
 def run_evaluation():
     # --- Settings ---
     N_SAMPLES = 5       # Number of responses to generate per prompt
-    TEMP = 0.7          # Temperature
+    TEMP = 0.1          # Temperature
     # Choose categories to test, set to None to test all
     # MT-Bench categories: coding, extraction, humanities, math, reasoning, roleplay, stem, writing
     TARGET_CATEGORIES = ['writing', 'reasoning', 'roleplay']

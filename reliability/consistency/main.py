@@ -7,95 +7,127 @@ import numpy as np
 import torch
 from bert_score import score
 from datasets import load_dataset
+from openai import AzureOpenAI, OpenAI
 from tqdm import tqdm
-from transformers import AutoModelForCausalLM, AutoTokenizer, set_seed
+from transformers import set_seed
 
 set_seed(42)
 
-MODEL_ID = "Qwen/Qwen2.5-0.5B-Instruct"
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+# --- CONFIGURATION ---
+
+# Backend selection: "ollama" or "azure"
+BACKEND_TYPE = "ollama"
+
+# --- OLLAMA SETTINGS ---
+OLLAMA_CONFIG = {
+    "base_url": "http://localhost:11434/v1",
+    "api_key": "ollama",
+    "model": "llama3.1:8b"
+}
+
+# --- AZURE OPENAI SETTINGS ---
+AZURE_CONFIG = {
+    "endpoint": "https://YOUR_RESOURCE.openai.azure.com/",
+    "api_key": "YOUR_API_KEY",
+    "api_version": "2024-02-15-preview",
+    "deployment_name": "gpt-4o"
+}
+
+# Device for BERTScore (metric calculation)
+DEVICE = "cuda" if torch.cuda.is_available(
+) else "mps" if torch.backends.mps.is_available() else "cpu"
 OUTPUT_PATH = "outputs"
 
-print(f"Loading model: {MODEL_ID}...")
-try:
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
-    model = AutoModelForCausalLM.from_pretrained(
-        MODEL_ID,
-        dtype="auto",
-        device_map="auto"
-    )
 
-    if tokenizer.pad_token_id is None:
-        tokenizer.pad_token_id = tokenizer.eos_token_id
-
-    print("Model loaded successfully!")
-except Exception as e:
-    print(f"Failed to load model: {e}")
-    exit()
-
-
-def get_hf_responses(prompt: str, n: int = 5, temperature: float = 0.7):
-    """Use HF model to generate N responses for the same prompt"""
-
-    messages = [
-        {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": prompt}
-    ]
-    text = tokenizer.apply_chat_template(
-        messages, tokenize=False, add_generation_prompt=True)
-    model_inputs = tokenizer([text], return_tensors="pt").to(model.device)
-
-    with torch.no_grad():
-        generated_ids = model.generate(
-            model_inputs.input_ids,
-            max_new_tokens=512,
-            do_sample=True,
-            temperature=temperature,
-            top_p=0.9,
-            num_return_sequences=n,
-            pad_token_id=tokenizer.pad_token_id
+def get_client_and_model():
+    """
+    Returns the appropriate OpenAI client and model name 
+    based on the BACKEND_TYPE configuration.
+    """
+    if BACKEND_TYPE == "ollama":
+        print(f"Initializing Ollama client at {OLLAMA_CONFIG['base_url']}...")
+        client = OpenAI(
+            base_url=OLLAMA_CONFIG["base_url"],
+            api_key=OLLAMA_CONFIG["api_key"]
         )
+        return client, OLLAMA_CONFIG["model"]
 
-    input_len = model_inputs.input_ids.shape[1]
+    elif BACKEND_TYPE == "azure":
+        print(
+            f"Initializing Azure OpenAI client at {AZURE_CONFIG['endpoint']}...")
+        client = AzureOpenAI(
+            api_key=AZURE_CONFIG["api_key"],
+            api_version=AZURE_CONFIG["api_version"],
+            azure_endpoint=AZURE_CONFIG["endpoint"]
+        )
+        return client, AZURE_CONFIG["deployment_name"]
+
+    else:
+        raise ValueError(f"Unsupported backend type: {BACKEND_TYPE}")
+
+
+def generate_responses(client, model_name, prompt, n=3, temperature=0.7):
+    """
+    Generates N responses using the unified OpenAI-compatible client.
+    """
     responses = []
-    for output_ids in generated_ids:
-        generated_text = tokenizer.decode(
-            output_ids[input_len:], skip_special_tokens=True)
-        responses.append(generated_text)
+
+    for i in range(n):
+        try:
+            completion = client.chat.completions.create(
+                model=model_name,
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=temperature,
+                n=1
+            )
+
+            content = completion.choices[0].message.content
+            if content:
+                responses.append(content)
+
+        except Exception as e:
+            print(f"Generation error (attempt {i+1}/{n}): {e}")
 
     return responses
 
 
 def calculate_bertscore(responses, lang="en"):
+    """
+    Calculates the pairwise BERTScore similarity for the generated responses.
+    """
+    # Filter empty responses
+    responses = [r for r in responses if r]
+
     if len(responses) < 2:
         return 0.0, 0.0
 
+    # Create all unique pairs
     pairs = list(itertools.combinations(responses, 2))
     cands = [p[0] for p in pairs]
     refs = [p[1] for p in pairs]
 
-    P, R, F1 = score(cands, refs, lang=lang, verbose=True,
-                     device=DEVICE)
-
-    mean_score = float(np.mean(F1.cpu().numpy()))
-    min_score = float(np.min(F1.cpu().numpy()))
-
-    return mean_score, min_score
+    try:
+        # verbose=False to keep logs clean
+        P, R, F1 = score(cands, refs, lang=lang, verbose=False, device=DEVICE)
+        mean_score = float(np.mean(F1.cpu().numpy()))
+        min_score = float(np.min(F1.cpu().numpy()))
+        return mean_score, min_score
+    except Exception as e:
+        print(f"BERTScore calculation failed: {e}")
+        return 0.0, 0.0
 
 
 def load_mt_bench_data(categories=None, max_samples=None):
-    """
-    Load MT-Bench Prompts from Hugging Face
-    categories: list, e.g. ['reasoning', 'writing']
-    max_samples: limit the number of samples for testing
-    """
-    print("Loading MT-Bench dataset...")
-    dataset = load_dataset("HuggingFaceH4/mt_bench_prompts", split="train")
+    print("Loading MT-Bench dataset from Hugging Face...")
+    dataset = load_dataset("./mt_bench_prompts", split="train")
 
     data_list = []
     for row in dataset:
         category = row['category']
-        prompt = row['prompt'][0]  # Use the first prompt variant
+        prompt = row['prompt'][0]
 
         if categories and category not in categories:
             continue
@@ -109,70 +141,76 @@ def load_mt_bench_data(categories=None, max_samples=None):
     if max_samples:
         data_list = data_list[:max_samples]
 
-    print(f"Loaded {len(data_list)} test prompts (source: MT-Bench)")
+    print(f"Loaded {len(data_list)} test prompts.")
     return data_list
 
 
 def run_evaluation():
-    # --- Settings ---
-    N_SAMPLES = 5       # Number of responses to generate per prompt
-    TEMP = 0.7          # Temperature
-    # Choose categories to test, set to None to test all
-    # MT-Bench categories: coding, extraction, humanities, math, reasoning, roleplay, stem, writing
-    TARGET_CATEGORIES = ['writing', 'reasoning', 'roleplay']
-    MAX_TEST_SAMPLES = 3  # For testing, set to None for full run
+    # 1. Setup Client
+    client, model_name = get_client_and_model()
 
+    # 2. Evaluation Parameters
+    N_SAMPLES = 5
+    TEMP = 0.1
+    TARGET_CATEGORIES = ['writing', 'reasoning', 'roleplay']
+    MAX_TEST_SAMPLES = 3  # Set to None to run all
+
+    # 3. Load Data
     test_data = load_mt_bench_data(
-        categories=TARGET_CATEGORIES, max_samples=MAX_TEST_SAMPLES)
+        categories=TARGET_CATEGORIES, max_samples=MAX_TEST_SAMPLES
+    )
 
     results = []
-    category_stats = {}  # To accumulate scores per category
+    category_stats = {}
 
     print(
-        f"\nStarting consistency evaluation (N={N_SAMPLES}, Temp={TEMP})...\n")
+        f"\nStarting consistency evaluation (Backend={BACKEND_TYPE}, Model={model_name})...\n")
 
     for item in tqdm(test_data, desc="Evaluating"):
         prompt = item['prompt']
         category = item['category']
 
-        # Generate N responses
-        try:
-            responses = get_hf_responses(prompt, n=N_SAMPLES, temperature=TEMP)
+        # Generate
+        responses = generate_responses(
+            client, model_name, prompt, n=N_SAMPLES, temperature=TEMP)
 
-            # Calculate scores
-            mean_score, min_score = calculate_bertscore(responses, lang="en")
+        if not responses:
+            continue
 
-            # Results
-            result_entry = {
-                "id": item['id'],
-                "category": category,
-                "prompt": prompt,
-                "consistency_score": mean_score,
-                "min_score": min_score,
-                "responses": responses
-            }
-            results.append(result_entry)
+        # Score
+        mean_score, min_score = calculate_bertscore(responses)
 
-            # Accumulate scores per category
-            if category not in category_stats:
-                category_stats[category] = []
-            category_stats[category].append(mean_score)
+        # Record
+        result_entry = {
+            "id": item['id'],
+            "category": category,
+            "prompt": prompt,
+            "consistency_score": mean_score,
+            "min_score": min_score,
+            "responses": responses
+        }
+        results.append(result_entry)
 
-        except Exception as e:
-            print(f"\n[Error] ID {item['id']} failed: {e}")
+        if category not in category_stats:
+            category_stats[category] = []
+        category_stats[category].append(mean_score)
 
-    # Generate report
+    # 4. Reporting
+    if not results:
+        print("No results generated.")
+        return
+
     overall_mean = np.mean([r['consistency_score'] for r in results])
 
     print("\n" + "="*40)
-    print("LLM Consistency Evaluation Report")
+    print("Consistency Evaluation Report")
     print("="*40)
-    print(f"Model: {MODEL_ID}")
+    print(f"Backend: {BACKEND_TYPE}")
+    print(f"Model: {model_name}")
     print(f"Overall Mean Score: {overall_mean:.4f}")
     print("-" * 40)
     print("Category Breakdown:")
 
-    # Output average scores per category
     summary_data = {}
     for cat, scores in category_stats.items():
         cat_mean = np.mean(scores)
@@ -181,10 +219,11 @@ def run_evaluation():
 
     print("="*40)
 
-    # Save detailed results to JSON
+    # 5. Save output
     output = {
         "meta": {
-            "model": MODEL_ID,
+            "backend": BACKEND_TYPE,
+            "model": model_name,
             "n_samples": N_SAMPLES,
             "temperature": TEMP,
             "overall_score": overall_mean
@@ -194,11 +233,12 @@ def run_evaluation():
     }
 
     os.makedirs(OUTPUT_PATH, exist_ok=True)
-    with open(os.path.join(OUTPUT_PATH, f"reliability_consistency_results_{datetime.now().strftime('%Y%m%d%H%M%S')}.json"), "w", encoding="utf-8") as f:
+    filename = f"consistency_{BACKEND_TYPE}_{datetime.now().strftime('%Y%m%d%H%M%S')}.json"
+
+    with open(os.path.join(OUTPUT_PATH, filename), "w", encoding="utf-8") as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
 
-    print(
-        f"\nDetailed results saved to reliability_consistency_results_{datetime.now().strftime('%Y%m%d%H%M%S')}.json")
+    print(f"\nResults saved to {filename}")
 
 
 if __name__ == "__main__":
