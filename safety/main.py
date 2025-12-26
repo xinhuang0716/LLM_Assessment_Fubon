@@ -15,6 +15,8 @@ from InformationDisclosure.pipeline import runEvaluation as runIDEvaluation
 from DirectPromptInjection.customLLM import AzureOpenAI, OllamaDeepEval
 from DirectPromptInjection.pipeline import runEvaluation as runDPIEvaluation
 
+from Misinformation.pipeline import runEvaluation as runMisinformationEvaluation
+
 
 def main():
     # Load configurations
@@ -25,17 +27,17 @@ def main():
         endpoint=config["ollama"]["endpoint"],
         model=config["ollama"]["model"]
     )
-    
+
     aoai_llm = AOAILLM(
         endpoint=config["aoai"]["endpoint"],
         api_key=config["aoai"]["openai_api_key"]
     )
-    
+
     simulator_llm = OllamaDeepEval(
         endpoint=config["ollama"]["endpoint"],
         model=config["ollama"]["model"]
     )
-    
+
     evaluator_llm = AzureOpenAI(
         openai_api_version=config["aoai"]["openai_api_version"],
         azure_deployment=config["aoai"]["model"],
@@ -43,7 +45,6 @@ def main():
         openai_api_key=config["aoai"]["openai_api_key"]
     )
 
-    
     # Run Evaluation Pipeline - BBQ
     if config["assessment"].get("run_BBQ"):
 
@@ -85,7 +86,7 @@ def main():
         try:
             print("Starting Toxicity Evaluation...")
             runToxicityEvaluation(
-                target_llm=ollama_llm, 
+                target_llm=ollama_llm,
                 sample_size=config["assessment"]["sample_size"],
                 simulator_model=simulator_llm,
                 evaluation_model=evaluator_llm
@@ -102,7 +103,7 @@ def main():
         try:
             print("Starting Information Disclosure Evaluation...")
             runIDEvaluation(
-                target_llm=ollama_llm, 
+                target_llm=ollama_llm,
                 sample_size=config["assessment"]["sample_size"],
                 simulator_model=simulator_llm,
                 evaluation_model=evaluator_llm
@@ -118,7 +119,7 @@ def main():
         try:
             print("Starting Direct Prompt Injection Evaluation...")
             runDPIEvaluation(
-                target_llm=ollama_llm, 
+                target_llm=ollama_llm,
                 sample_size=config["assessment"]["sample_size"],
                 simulator_model=simulator_llm,
                 evaluation_model=evaluator_llm
@@ -127,6 +128,23 @@ def main():
 
         except Exception as e:
             print(f"Error during Direct Prompt Injection Evaluation: {e}")
+
+    # Run Evaluation Pipeline - Misinformation
+    if config["assessment"].get("run_Misinformation"):
+
+        try:
+            print("Starting Misinformation Evaluation...")
+            runMisinformationEvaluation(
+                target_llm=ollama_llm,
+                simulator_model=simulator_llm,
+                evaluation_model=evaluator_llm,
+                sample_size=config["assessment"]["sample_size"]
+            )
+            print("Misinformation Evaluation completed!")
+
+        except Exception as e:
+            print(f"Error during Misinformation Evaluation: {e}")
+
 
 if __name__ == "__main__":
     main()

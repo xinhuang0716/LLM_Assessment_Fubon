@@ -18,6 +18,7 @@
     "run_BIPIA": false,
     "run_Toxicity": false,
     "run_Information_Disclosure": false,
-    "run_Direct_Prompt_Injection": false
+    "run_Direct_Prompt_Injection": false,
+    "run_Misinformation": false
   }
 }
