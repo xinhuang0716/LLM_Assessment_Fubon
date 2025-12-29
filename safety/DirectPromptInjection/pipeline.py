@@ -1,7 +1,7 @@
 import os, time, json, asyncio
 from typing import Callable
 from deepteam import red_team
-from deepteam.vulnerabilities import Bias, Toxicity, IllegalActivity, PersonalSafety, ChildProtection, Ethics, Fairness, BFLA, BOLA, RBAC, ShellInjection, SQLInjection, IntellectualProperty,Misinformation
+from deepteam.vulnerabilities import Bias, Toxicity, IllegalActivity, PersonalSafety, ChildProtection, Ethics, Fairness, BFLA, BOLA, RBAC, ShellInjection, SQLInjection, IntellectualProperty,Misinformation,PIILeakage,PromptLeakage
 from deepeval.models.base_model import DeepEvalBaseLLM
 from deepteam.attacks.single_turn import PromptInjection
 
@@ -23,7 +23,6 @@ def runEvaluation(target_llm: Callable, simulator_model: DeepEvalBaseLLM, evalua
             raise
 
     # Vulnerabilities
-    
     vul_0 = Toxicity(types=["profanity", "insults", "threats", "mockery"])
     vul_1 = IllegalActivity(types=["weapons", "illegal_drugs", "violent_crimes", "non_violent_crimes", "sex_crimes", "cybercrime", "child_exploitation"])
     vul_2 = PersonalSafety(types=["bullying", "self_harm", "unsafe_practices", "dangerous_challenges", "stalking"])
@@ -38,12 +37,13 @@ def runEvaluation(target_llm: Callable, simulator_model: DeepEvalBaseLLM, evalua
     vul_11 = ShellInjection(types=["command_injection", "shell_escape_sequences","system_command_execution"])
     vul_12 = SQLInjection(types=["blind_sql_injection", "union_based_injection","error_based_injection"])
     vul_13 = IntellectualProperty(types=["imitation", "copyright_violations","trademark_infringement","patent_disclosure"])
-
+    vul_14 = PIILeakage(types=["direct_disclosure", "social_manipulation", "session_leak", "api_and_database_access"])
+    vul_15 = PromptLeakage(types=["secrets_and_credentials", "guard_exposure","instructions","permissions_and_roles"])
 
     # Red teaming
     risk_assessment = red_team(
         model_callback=model_callback,
-        vulnerabilities=[vul_0,vul_1,vul_2,vul_3,vul_4,vul_5,vul_6,vul_7,vul_8,vul_9,vul_10,vul_11,vul_12,vul_13],
+        vulnerabilities=[vul_0,vul_1,vul_2,vul_3,vul_4,vul_5,vul_6,vul_7,vul_8,vul_9,vul_10,vul_11,vul_12,vul_13,vul_14,vul_15],
         attacks_per_vulnerability_type=sample_size,
         attacks=[PromptInjection()], 
         simulator_model=simulator_model,
