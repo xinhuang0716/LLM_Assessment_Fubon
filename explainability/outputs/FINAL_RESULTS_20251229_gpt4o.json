@@ -1,0 +1,24 @@
+{
+  "XAI_overall_score": 0.93,
+  "overall_pass": true,
+  "overall_threshold": 0.8,
+  "cot": {
+    "model": "gpt-4o",
+    "avg_score": 0.894,
+    "count": 30,
+    "pass": true,
+    "threshold": 0.8
+  },
+  "citation": {
+    "response_model": "gpt-4o",
+    "judge_model": "gpt-4o",
+    "avg_score": 0.96625,
+    "count": 30,
+    "pass": true,
+    "threshold": 0.8
+  },
+  "weights": {
+    "weight_cot": 0.5,
+    "weight_citation": 0.5
+  }
+}
