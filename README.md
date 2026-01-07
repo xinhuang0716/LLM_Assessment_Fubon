@@ -1,49 +1,60 @@
 ## Task
 
-1. 設計評測指標：安全性、可靠性（穩定性）、可解釋性、透明性
-2. 建立測試資料集與場景模擬
-3. 開發自動化測試工具（可用 Python + LangChain + pytest 等）
-4. 建立報告產出機制（每次測試自動生成報告）
+- Design evaluation target: Safety, Reliability (Stability), Interpretability, and Transparency.
+- Build test datasets and scenario simulations.
+- Develop automated testing tools (using Python, LangChain, pytest, etc.).
+- Establish a reporting mechanism to automatically generate reports after each test.
 
-## Milestone
-1. 完成評測框架設計
-2. 建立自動化測試框架原型並驗證可行性
+📌 The scope is limited to the LLM model itself and does not extend to other LLM services or applications.
 
-  📌 範疇限定在LLM模型本身，不擴大至其他LLM服務或Application的評測
+## Project Structure
 
-## Schedule
+```
+LLM_Assessment_Fubon/
+├── 📄 README.md
+│
+├── 🛡️ safety/
+│   ├── 🔍 BBQ/                             # Bias benchmark
+│   ├── 🧩 BIPIA/                           # Indirect prompt injection benchmark
+│   ├── 🛠️ DirectPromptInjection/           # Direct prompt injection tests
+│   ├── 🔐 InformationDisclosure/           # Information leakage tests
+│   ├── ❗ Misinformation/                  # Misinformation detection
+│   └── ☣️ Toxicity/                        # Toxicity evaluation
+│
+├── ✅ reliability/
+│   ├── 📚 ceval/                           # C-Eval benchmark
+│   └── 🔄 consistency/                     # Consistency checks
+│
+├── 🔍 explainability/
+│   ├── 🧠 cot/                             # Chain-of-Thought evaluation
+│   └── 📖 citation/                        # Citation validation
+│
+└── 🔎 transparency/
+```
 
-### ✅ 專案啟動 9/16
+## Evaluation Results
 
-|Id|Task|Desc||
-|---|---|---|---|
-|1|評測 Survey|研究彙整 LLM 模型評測維度 (安全性、可靠性、可解釋性、透明性) 下的衡量方式與指標|黃昕, 宥任, 御唐|
-|2|LLM 模型盤點|盤點現有四大 BU 場景下，所使用到的 LLM 模型有哪些|其他組別, 各 BU 窗口|
- 
-- 評測 Survey 需包含但不限於以下內容：
-    - 衡量方式與指標
-    - 指標計算方式
-    - 是否有第三方測試工具, Benchmark Dataset 等資源可使用
+|      Type      |          Subtype          |  Metric   | GPT-4o | Llama3.1:8B | Gemma3:12B | GPT-OSS:20B |
+| :------------: | :-----------------------: | :-------: | :----: | :---------: | :--------: | :---------: |
+|     Safety     |     Fairness and Bias     | Accuracy  |  94%   |     41%     |    77%     |     84%     |
+|     Safety     |         Toxicity          | Pass Rate |   -    |     92%     |    96%     |     92%     |
+|     Safety     |  Information Disclosure   |           |        |             |            |             |
+|     Safety     |      Misinformation       |           |        |             |            |             |
+|     Safety     |  Direct Prompt Injection  |           |        |             |            |             |
+|     Safety     | Indirect Prompt Injection |    ASR    |  70%   |     70%     |    73%     |     55%     |
+|  Reliability   |                           |           |        |             |            |             |
+|  Reliability   |                           |           |        |             |            |             |
+| Explainability |                           |           |        |             |            |             |
+| Explainability |                           |           |        |             |            |             |
 
-### 👉 第一次報告 10/7，9/26 先於組內彙整
+- GPT-4o can't complete Toxicity tests due to Azure OpenAI Service content policy restrictions.
+- Each subtype conduct 30 test cases, and the metrics are calculated based on the average performance across all cases.
+- To see more details, please refer to the respective `results` folders under each evaluation target.
 
-|Id|Task|Desc||
-|---|---|---|---|
-|3|評測指標決議|決議採用評測方式、使用指標、指標計算方式、使用第三方資源等，本部分除了組內間共同決議外，尚須與 Guardrail 組、模型選用策略組進行 Align|鼎文, 家斌, 君綺, 黃昕, 宥任, 御唐, 其他組別成員|
-|4|評測框架設計|-|黃昕, 宥任, 御唐|
- 
-### 👉 第二次報告 10/30
+## TO-DO
 
-|Id|Task|Desc||
-|---|---|---|---|
-|5|評測框架彙整|訂定最終欲產出之完整版的評測報告|鼎文, 家斌, 君綺, 黃昕, 宥任, 御唐|
-|6|評測框架開發|-|黃昕, 宥任, 御唐|
- 
-### 👉 第三次報告 11/30
- 
-|Id|Task|Desc||
-|---|---|---|---|
-|7|開發自動化工具|打包及建立自動化測試工具|TBD|
-|8|實測自動化工具|選用新模型進行評測|TBD|
-|9|文件開發|蒐集及整理自動化測試工具的評測結果並文件化以利後續使用|TBD|
-
+- [x] Design Evaluation Framework
+- [x] Build Test Dataset and Testing Python Script
+- [ ] Refactoring Testing Framework
+- [ ] Output Test Report in more structured and visualized way
+- [ ] Packaging the Testing Framework as a Python Library or some alternatives
