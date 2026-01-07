@@ -78,8 +78,7 @@ class AzureOpenAI(DeepEvalBaseLLM):
             azure_endpoint=azure_endpoint,
             openai_api_key=openai_api_key,
             temperature=0.0,
-            model_kwargs={"response_format": {"type": "json_object"}},
-            default_headers={"Content-Filter-Mode": "asynchronous_filter"}
+            model_kwargs={"response_format": {"type": "json_object"}}
         )
 
         self.system_message = (

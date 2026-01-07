@@ -2,6 +2,7 @@
   "ollama": {
     "description": "targetLLM",
     "model": "llama3.1:8b",
+    "available_models": ["llama3.1:8b", "gemma3:12b", "gpt-oss:20b"],
     "endpoint": "http://172.21.134.121:11434/api/generate"
   },
   "aoai": {

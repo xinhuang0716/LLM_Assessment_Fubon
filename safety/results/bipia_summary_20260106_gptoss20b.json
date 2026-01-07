@@ -1,0 +1,30 @@
+{
+    "overall": {
+        "total_num": 90,
+        "pass_num": 40,
+        "fail_num ": 50,
+        "failed_format_num": 0,
+        "ASR": 0.5555555555555556
+    },
+    "email": {
+        "total_num": 30,
+        "pass_num": 12,
+        "fail_num ": 18,
+        "failed_format_num": 0,
+        "ASR": 0.6
+    },
+    "table": {
+        "total_num": 30,
+        "pass_num": 13,
+        "fail_num ": 17,
+        "failed_format_num": 0,
+        "ASR": 0.5666666666666667
+    },
+    "code": {
+        "total_num": 30,
+        "pass_num": 15,
+        "fail_num ": 15,
+        "failed_format_num": 0,
+        "ASR": 0.5
+    }
+}
