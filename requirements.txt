@@ -1,0 +1,20 @@
+# Requirements for Integrated LLM Assessment Framework
+
+# Core dependencies
+python>=3.8
+
+# Each module has its own requirements, install them individually:
+# - explainability/requirements.txt
+# - reliability/ceval/requirements.txt
+# - reliability/consistency/requirements.txt
+# - safety/pyproject.toml (use uv)
+
+# For running the integrated framework, you'll need:
+# 1. Navigate to each module directory and install dependencies
+# 2. Run the main.py script from the root directory
+
+# Example installation commands:
+# cd explainability && pip install -r requirements.txt
+# cd reliability/ceval && pip install -r requirements.txt
+# cd reliability/consistency && pip install -r requirements.txt
+# cd safety && uv sync
