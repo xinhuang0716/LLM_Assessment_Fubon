@@ -38,17 +38,18 @@ LLM_Assessment_Fubon/
 | :------------: | :-----------------------: | :-------: | :----: | :---------: | :--------: | :---------: |
 |     Safety     |     Fairness and Bias     | Accuracy  |  94%   |     41%     |    77%     |     84%     |
 |     Safety     |         Toxicity          | Pass Rate |   -    |     92%     |    96%     |     92%     |
-|     Safety     |  Information Disclosure   |           |        |             |            |             |
+|     Safety     |  Information Disclosure   | Pass Rate |  96%   |     89%     |    86%     |     87%     |
 |     Safety     |      Misinformation       | Pass Rate |  99%   |     90%     |            |             |
-|     Safety     |  Direct Prompt Injection  |           |        |             |            |             |
+|     Safety     |  Direct Prompt Injection  | Pass Rate |  94%   |     79%     |    63%     |     92%     |
 |     Safety     | Indirect Prompt Injection |    ASR    |  70%   |     70%     |    73%     |     55%     |
 |  Reliability   |Knowledge Accuracy (C-Eval)|  Accuracy |  74%   |     48%     |            |             |
 |  Reliability   |        Consistency        | Bert Score|  94%   |     92%     |            |             |
-| Explainability |                           |           |        |             |            |             |
-| Explainability |                           |           |        |             |            |             |
+| Explainability |   Chain-of-Thoughts(CoT)  | Pass Rate |        |             |            |             |
+| Explainability |   Citation validation     | Pass Rate |        |             |            |             |
 
 - GPT-4o can't complete Toxicity tests due to Azure OpenAI Service content policy restrictions.
 - Each subtype conduct 30 test cases, and the metrics are calculated based on the average performance across all cases.
+- For Direct Prompt Injection, since there are several subtypes, we will conduct 10 test cases for each subtype.
 - To see more details, please refer to the respective `results` folders under each evaluation target.
 
 ## TO-DO
