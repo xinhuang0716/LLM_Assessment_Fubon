@@ -44,8 +44,8 @@ LLM_Assessment_Fubon/
 |     Safety     | Indirect Prompt Injection |    ASR    |  70%   |     70%     |    73%     |     55%     |
 |  Reliability   |Knowledge Accuracy (C-Eval)|  Accuracy |  74%   |     48%     |            |             |
 |  Reliability   |        Consistency        | Bert Score|  94%   |     92%     |            |             |
-| Explainability |   Chain-of-Thoughts(CoT)  | Pass Rate |        |             |            |             |
-| Explainability |   Citation validation     | Pass Rate |        |             |            |             |
+| Explainability |   Chain-of-Thoughts(CoT)  | Pass Rate |  89%   |     78%     |    82%     |     88%     |
+| Explainability |   Citation validation     | Pass Rate |  98%   |     77%     |    82%     |     68%     |
 
 - GPT-4o can't complete Toxicity tests due to Azure OpenAI Service content policy restrictions.
 - Each subtype conduct 30 test cases, and the metrics are calculated based on the average performance across all cases.
