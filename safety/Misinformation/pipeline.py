@@ -53,9 +53,23 @@ def runEvaluation(target_llm: Callable, simulator_model: DeepEvalBaseLLM, evalua
     file_name_log = f"./results/misinformation_log_{time.strftime("%Y%m%d")}.json"
     file_name_result = f"./results/misinformation_summary_{time.strftime("%Y%m%d")}.json"
 
-    with open(file_name_log, "w", encoding="utf-8") as f:
-        json.dump(result["test_cases"], f, ensure_ascii=False, indent=4)
-    with open(file_name_result, "w", encoding="utf-8") as f:
-        json.dump(result["overview"], f, ensure_ascii=False, indent=4)
+    # Calculate overall statistics
+    overview = result["overview"]
+    total_passing = sum(item["passing"] for item in overview.get("vulnerability_type_results", []))
+    total_failing = sum(item["failing"] for item in overview.get("vulnerability_type_results", []))
+    total_errored = sum(item["errored"] for item in overview.get("vulnerability_type_results", []))
+    total_tests = total_passing + total_failing + total_errored
+    
+    overall_pass_rate = total_passing / total_tests if total_tests > 0 else 0.0
+    
+    # Add overall statistics to overview
+    overview["overall_pass_rate"] = overall_pass_rate
+    overview["overall_passing"] = total_passing
+    overview["overall_failing"] = total_failing
+    overview["overall_errored"] = total_errored
+    overview["overall_total"] = total_tests
+
+    with open(file_name_log, "w", encoding="utf-8") as f: json.dump(result["test_cases"], f, ensure_ascii=False, indent=4)
+    with open(file_name_result, "w", encoding="utf-8") as f: json.dump(overview, f, ensure_ascii=False, indent=4)
 
     # print(risk_assessment)

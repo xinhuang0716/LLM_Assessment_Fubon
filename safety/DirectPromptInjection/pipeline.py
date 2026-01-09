@@ -24,8 +24,8 @@ def runEvaluation(target_llm: Callable, simulator_model: DeepEvalBaseLLM, evalua
 
     # Vulnerabilities
     vul_0 = Toxicity(types=["profanity", "insults", "threats", "mockery"])
-    vul_1 = IllegalActivity(types=["weapons", "illegal_drugs", "violent_crimes", "non_violent_crimes", "sex_crimes", "cybercrime", "child_exploitation"])
-    vul_2 = PersonalSafety(types=["bullying", "self_harm", "unsafe_practices", "dangerous_challenges", "stalking"])
+    # vul_1 = IllegalActivity(types=["weapons", "illegal_drugs", "violent_crimes", "non_violent_crimes", "sex_crimes", "cybercrime", "child_exploitation"])
+    # vul_2 = PersonalSafety(types=["bullying", "self_harm", "unsafe_practices", "dangerous_challenges", "stalking"])
     vul_3 = Bias(types=["race", "gender", "religion", "politics"])
     vul_4 = ChildProtection(types=["data_privacy", "age_verification","exposure_interaction"])
     vul_5 = Misinformation(types=["factual_errors", "unsupported_claims","expertize_misrepresentation"])
@@ -43,7 +43,7 @@ def runEvaluation(target_llm: Callable, simulator_model: DeepEvalBaseLLM, evalua
     # Red teaming
     risk_assessment = red_team(
         model_callback=model_callback,
-        vulnerabilities=[vul_0,vul_1,vul_2,vul_3,vul_4,vul_5,vul_6,vul_7,vul_8,vul_9,vul_10,vul_11,vul_12,vul_13,vul_14,vul_15],
+        vulnerabilities=[vul_0,vul_3,vul_4,vul_5,vul_6,vul_7,vul_8,vul_9,vul_10,vul_11,vul_12,vul_13,vul_14,vul_15],
         attacks_per_vulnerability_type=sample_size,
         attacks=[PromptInjection()], 
         simulator_model=simulator_model,
@@ -63,7 +63,23 @@ def runEvaluation(target_llm: Callable, simulator_model: DeepEvalBaseLLM, evalua
     file_name_log = f"./results/directpromptinjection_log_{time.strftime('%Y%m%d')}.json"
     file_name_result = f"./results/directpromptinjection_summary_{time.strftime('%Y%m%d')}.json"
 
+    # Calculate overall statistics
+    overview = result["overview"]
+    total_passing = sum(item["passing"] for item in overview.get("vulnerability_type_results", []))
+    total_failing = sum(item["failing"] for item in overview.get("vulnerability_type_results", []))
+    total_errored = sum(item["errored"] for item in overview.get("vulnerability_type_results", []))
+    total_tests = total_passing + total_failing + total_errored
+    
+    overall_pass_rate = total_passing / total_tests if total_tests > 0 else 0.0
+    
+    # Add overall statistics to overview
+    overview["overall_pass_rate"] = overall_pass_rate
+    overview["overall_passing"] = total_passing
+    overview["overall_failing"] = total_failing
+    overview["overall_errored"] = total_errored
+    overview["overall_total"] = total_tests
+
     with open(file_name_log, "w", encoding="utf-8") as f: json.dump(result["test_cases"], f, ensure_ascii=False, indent=4)
-    with open(file_name_result, "w", encoding="utf-8") as f: json.dump(result["overview"], f, ensure_ascii=False, indent=4)
+    with open(file_name_result, "w", encoding="utf-8") as f: json.dump(overview, f, ensure_ascii=False, indent=4)
 
     #print(risk_assessment)
