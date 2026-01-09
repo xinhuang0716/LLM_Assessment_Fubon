@@ -5,6 +5,8 @@ import warnings
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, Optional
+import subprocess
+import json
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
@@ -16,11 +18,6 @@ class IntegratedAssessment:
         self.config_path = Path(config_path)
         self.config = self._load_config()
         self.results = {
-            "metadata": {
-                "timestamp": datetime.now().isoformat(),
-                "model_name": self.config["model"]["name"],
-                "model_type": self.config["model"]["type"]
-            },
             "explainability": {},
             "reliability": {},
             "safety": {},
@@ -40,7 +37,7 @@ class IntegratedAssessment:
     async def run_explainability(self) -> Dict[str, Any]:
         """Run explainability evaluations"""
         if not self.config["evaluation"]["explainability"]["enabled"]:
-            print("⏭️  Skipping Explainability evaluation (disabled in config)")
+            print("Skipping Explainability evaluation (disabled in config)")
             return {"status": "skipped"}
         
         print("\n" + "="*60)
@@ -50,7 +47,7 @@ class IntegratedAssessment:
         try:
             # Import explainability modules
             sys.path.insert(0, str(Path(__file__).parent / "explainability"))
-            from core.common.clients import AsyncAzureOAIClient, AsyncGeminiClient, AsyncLlamaClient
+            from core.common.clients import AsyncAzureOAIClient, AsyncGeminiClient, AsyncOllamaClient
             from core.common.paths import data_dir
             from core.pipelines import run_all
             from core.evaluators import ScoreAggregator, ResultProcessor
@@ -58,20 +55,19 @@ class IntegratedAssessment:
             # Initialize LLM clients based on config
             llm_config = self.config["llm_configs"]
             
-            # For explainability, we need CoT answer LLM, Citation answer LLM, and Citation judge LLM
-            cot_answer_llm = AsyncAzureOAIClient(
+            aoai_llm = AsyncAzureOAIClient(
                 api_key=llm_config["azure_openai"]["api_key"],
                 azure_endpoint=llm_config["azure_openai"]["endpoint"],
                 api_version=llm_config["azure_openai"]["api_version"],
                 model=llm_config["azure_openai"]["model"]
             )
             
-            cite_answer_llm = AsyncLlamaClient(
+            ollama_llm = AsyncOllamaClient(
                 model=llm_config["ollama"]["model"],
                 temperature=0.3,
             )
             
-            cite_judge_llm = AsyncGeminiClient(
+            gemini_llm = AsyncGeminiClient(
                 api_key=llm_config["gemini"]["api_key"],
                 model=llm_config["gemini"]["model"],
                 temperature=0.0
@@ -83,9 +79,9 @@ class IntegratedAssessment:
                 reports = await run_all(
                     gsm8k_path=str(Path(__file__).parent / "explainability" / "data" / "gsm8k.parquet"),
                     nq_path=str(Path(__file__).parent / "explainability" / "data" / "nq.parquet"),
-                    cot_answer_llm=cot_answer_llm,
-                    cite_answer_llm=cite_answer_llm,
-                    cite_judge_llm=cite_judge_llm,
+                    cot_answer_llm=aoai_llm,
+                    cite_answer_llm=aoai_llm,
+                    cite_judge_llm=aoai_llm,
                     cot_sample_method="random",
                     cot_n_samples=exp_config["cot"]["sample_size"],
                     cot_random_state=50,
@@ -104,36 +100,34 @@ class IntegratedAssessment:
                 )
                 
                 # Save detailed results
-                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                timestamp = datetime.now().strftime("%Y%m%d")
                 output_dir = Path(__file__).parent / "explainability" / "outputs"
                 output_dir.mkdir(exist_ok=True)
                 
-                with open(output_dir / f'explainability_success_records_{self.config["model"]["name"]}_{timestamp}.json', 'w', encoding='utf-8') as f:
+                with open(output_dir / f'explainability_success_records_{timestamp}.json', 'w', encoding='utf-8') as f:
                     json.dump(success_records, f, ensure_ascii=False, indent=2)
                 
-                with open(output_dir / f'explainability_failed_records_{self.config["model"]["name"]}_{timestamp}.json', 'w', encoding='utf-8') as f:
+                with open(output_dir / f'explainability_failed_records_{timestamp}.json', 'w', encoding='utf-8') as f:
                     json.dump(failed_results, f, ensure_ascii=False, indent=2)
                 
-                with open(output_dir / f'explainability_final_results_{self.config["model"]["name"]}_{timestamp}.json', 'w', encoding='utf-8') as f:
+                with open(output_dir / f'explainability_final_results_{timestamp}.json', 'w', encoding='utf-8') as f:
                     json.dump(task_scores, f, ensure_ascii=False, indent=2)
                 
                 print(f"Explainability evaluation completed")
-                print(f"   Overall Score: {task_scores['XAI_overall_score']:.3f}")
-                print(f"   Status: {'PASS' if task_scores['overall_pass'] else 'FAIL'}")
+                print(f"   CoT Average Score: {task_scores['cot']['avg_score']}")
+                print(f"   Citation Average Score: {task_scores['citation']['avg_score']}")
+                print(f"   Status: {'PASS' if task_scores['cot']['pass'] and task_scores['citation']['pass'] else 'FAIL'}")
                 
                 return {
                     "status": "completed",
-                    # "overall_score": task_scores["XAI_overall_score"],
-                    "pass": task_scores["overall_pass"],
-                    # "threshold": task_scores["overall_threshold"],
                     "cot": task_scores["cot"],
                     "citation": task_scores["citation"]
                 }
                 
             finally:
-                await cite_judge_llm.aclose()
-                await cot_answer_llm.aclose()
-                await cite_answer_llm.aclose()
+                await aoai_llm.aclose()
+                await ollama_llm.aclose()
+                await gemini_llm.aclose()
                 
         except Exception as e:
             print(f"Error during Explainability evaluation: {e}")
@@ -148,7 +142,7 @@ class IntegratedAssessment:
             return {"status": "skipped"}
         
         print("\n" + "="*60)
-        print("✅ Starting Reliability Evaluation")
+        print("Starting Reliability Evaluation")
         print("="*60)
         
         results = {}
@@ -157,10 +151,10 @@ class IntegratedAssessment:
         # Run C-Eval
         if rel_config["ceval"]["enabled"]:
             try:
-                print("\n📚 Running C-Eval Assessment...")
+                print("\n Running C-Eval Assessment...")
                 results["ceval"] = self._run_ceval()
             except Exception as e:
-                print(f"❌ Error during C-Eval: {e}")
+                print(f"Error during C-Eval: {e}")
                 import traceback
                 traceback.print_exc()
                 results["ceval"] = {"status": "error", "error": str(e)}
@@ -200,9 +194,6 @@ class IntegratedAssessment:
     
     def _run_ceval(self) -> Dict[str, Any]:
         """Run C-Eval assessment"""
-        import subprocess
-        import json
-        
         ceval_config = self.config["evaluation"]["reliability"]["modules"]["ceval"]
         ceval_dir = Path(__file__).parent / "reliability" / "ceval"
         
@@ -241,9 +232,6 @@ class IntegratedAssessment:
     
     def _run_consistency(self) -> Dict[str, Any]:
         """Run consistency check"""
-        import subprocess
-        import json
-        
         consistency_config = self.config["evaluation"]["reliability"]["modules"]["consistency"]
         consistency_dir = Path(__file__).parent / "reliability" / "consistency"
         
@@ -280,11 +268,11 @@ class IntegratedAssessment:
     def run_safety(self) -> Dict[str, Any]:
         """Run safety evaluations"""
         if not self.config["evaluation"]["safety"]["enabled"]:
-            print("⏭️  Skipping Safety evaluation (disabled in config)")
+            print("Skipping Safety evaluation (disabled in config)")
             return {"status": "skipped"}
         
         print("\n" + "="*60)
-        print("🛡️  Starting Safety Evaluation")
+        print("Starting Safety Evaluation...")
         print("="*60)
         
         try:
@@ -316,12 +304,12 @@ class IntegratedAssessment:
             )
             
             # Initialize DeepEval LLMs for Toxicity, Information Disclosure, and Direct Prompt Injection
-            simulator_llm_ollama = ToxicityOllamaDeepEval(
+            simulator_llm_ollama = OllamaDeepEval(
                 endpoint=llm_config["ollama"]["endpoint"],
                 model=llm_config["ollama"]["model"]
             )
             
-            evaluator_llm_azure = ToxicityAzureOpenAI(
+            evaluator_llm_azure = AzureOpenAI(
                 openai_api_version=llm_config["azure_openai"]["api_version"],
                 azure_deployment=llm_config["azure_openai"]["model"],
                 azure_endpoint=llm_config["azure_openai"]["endpoint"],
@@ -357,10 +345,10 @@ class IntegratedAssessment:
                             "threshold": safety_config["bbq"]["threshold"],
                             "details": data
                         }
-                        print(f"✅ BBQ completed - Accuracy: {accuracy:.3f}")
+                        print(f"BBQ completed - Accuracy: {accuracy:.3f}")
                     
                 except Exception as e:
-                    print(f"❌ Error during BBQ: {e}")
+                    print(f"Error during BBQ: {e}")
                     results["bbq"] = {"status": "error", "error": str(e)}
             
             # Run BIPIA
@@ -392,7 +380,7 @@ class IntegratedAssessment:
                             "threshold": safety_config["bipia"]["threshold"],
                             "details": data
                         }
-                        print(f"✅ BIPIA completed - ASR: {asr:.3f}, Score: {score:.3f}")
+                        print(f"BIPIA completed - ASR: {asr:.3f}, Score: {score:.3f}")
                     
                 except Exception as e:
                     print(f"Error during BIPIA: {e}")
@@ -426,7 +414,7 @@ class IntegratedAssessment:
                             "threshold": safety_config["toxicity"]["threshold"],
                             "details": data
                         }
-                        print(f"✅ Toxicity completed - Pass Rate: {pass_rate:.3f}")
+                        print(f"Toxicity completed - Pass Rate: {pass_rate:.3f}")
                     
                 except Exception as e:
                     print(f"Error during Toxicity: {e}")
@@ -439,16 +427,8 @@ class IntegratedAssessment:
                     runIDEvaluation(
                         target_llm=ollama_llm,
                         sample_size=safety_config["information_disclosure"]["sample_size"],
-                        simulator_model=IDOllamaDeepEval(
-                            endpoint=llm_config["ollama"]["endpoint"],
-                            model=llm_config["ollama"]["model"]
-                        ),
-                        evaluation_model=IDAzureOpenAI(
-                            openai_api_version=llm_config["azure_openai"]["api_version"],
-                            azure_deployment=llm_config["azure_openai"]["model"],
-                            azure_endpoint=llm_config["azure_openai"]["endpoint"],
-                            openai_api_key=llm_config["azure_openai"]["api_key"]
-                        )
+                        simulator_model=simulator_llm_ollama,
+                        evaluation_model=evaluator_llm_azure 
                     )
                     
                     # Load latest result
@@ -468,7 +448,7 @@ class IntegratedAssessment:
                             "threshold": safety_config["information_disclosure"]["threshold"],
                             "details": data
                         }
-                        print(f"✅ Information Disclosure completed - Pass Rate: {pass_rate:.3f}")
+                        print(f"Information Disclosure completed - Pass Rate: {pass_rate:.3f}")
                     
                 except Exception as e:
                     print(f"Error during Information Disclosure: {e}")
@@ -481,16 +461,8 @@ class IntegratedAssessment:
                     runDPIEvaluation(
                         target_llm=ollama_llm,
                         sample_size=safety_config["direct_prompt_injection"]["sample_size"],
-                        simulator_model=DPIOllamaDeepEval(
-                            endpoint=llm_config["ollama"]["endpoint"],
-                            model=llm_config["ollama"]["model"]
-                        ),
-                        evaluation_model=DPIAzureOpenAI(
-                            openai_api_version=llm_config["azure_openai"]["api_version"],
-                            azure_deployment=llm_config["azure_openai"]["model"],
-                            azure_endpoint=llm_config["azure_openai"]["endpoint"],
-                            openai_api_key=llm_config["azure_openai"]["api_key"]
-                        )
+                        simulator_model=simulator_llm_ollama,
+                        evaluation_model=evaluator_llm_azure 
                     )
                     
                     # Load latest result
@@ -535,7 +507,7 @@ class IntegratedAssessment:
                         with open(latest_file, 'r', encoding='utf-8') as f:
                             data = json.load(f)
                         
-                        pass_rate = data.get("overall_pass_rate", data.get("pass_rate", 0))
+                        pass_rate = data.get("overall_pass_rate", 0)
                         results["misinformation"] = {
                             "status": "completed",
                             "score": pass_rate,
@@ -550,25 +522,9 @@ class IntegratedAssessment:
                     print(f"Error during Misinformation: {e}")
                     results["misinformation"] = {"status": "error", "error": str(e)}
             
-            # Calculate overall safety score
-            scores = []
-            for module_name, module_result in results.items():
-                if "score" in module_result:
-                    scores.append(module_result["score"])
-            
-            if scores:
-                overall_score = sum(scores) / len(scores)
-                threshold = self.config["evaluation"]["safety"]["threshold"]
-                results["overall_score"] = overall_score
-                results["pass"] = overall_score >= threshold
-                results["threshold"] = threshold
-                results["status"] = "completed"
-                
-                print(f"\nSafety evaluation completed")
-                print(f"   Overall Score: {overall_score:.3f}")
-                print(f"   Status: {'PASS' if results['pass'] else 'FAIL'}")
-            else:
-                results["status"] = "no_valid_results"
+            # Set completion status
+            results["status"] = "completed"
+            print(f"\nSafety evaluation completed")
             
             return results
             
@@ -598,64 +554,22 @@ class IntegratedAssessment:
         self._save_results()
         
         # Generate report
-        if self.config["output"]["generate_html_report"]:
-            self._generate_html_report()
+        # if self.config["output"]["generate_html_report"]:
+        #     self._generate_html_report()
         
         # Print summary
         self._print_summary()
     
     def _calculate_overall_score(self):
-        """Calculate weighted overall score"""
-        eval_config = self.config["evaluation"]
-        
-        scores = []
-        weights = []
-        
-        # Explainability
-        if self.results["explainability"].get("status") == "completed":
-            scores.append(self.results["explainability"]["overall_score"])
-            weights.append(eval_config["explainability"]["weight"])
-        
-        # Reliability
-        if self.results["reliability"].get("status") == "completed":
-            scores.append(self.results["reliability"]["overall_score"])
-            weights.append(eval_config["reliability"]["weight"])
-        
-        # Safety
-        if self.results["safety"].get("status") == "completed":
-            scores.append(self.results["safety"]["overall_score"])
-            weights.append(eval_config["safety"]["weight"])
-        
-        if scores and weights:
-            # Normalize weights
-            total_weight = sum(weights)
-            normalized_weights = [w / total_weight for w in weights]
-            
-            # Calculate weighted score
-            overall_score = sum(s * w for s, w in zip(scores, normalized_weights))
-            
-            self.results["overall"] = {
-                "score": overall_score,
-                "pass": (
-                    self.results["explainability"].get("pass", True) and
-                    self.results["reliability"].get("pass", True) and
-                    self.results["safety"].get("pass", True)
-                ),
-                "components": {
-                    "explainability": {
-                        "score": self.results["explainability"].get("overall_score"),
-                        "weight": normalized_weights[0] if len(normalized_weights) > 0 else 0
-                    } if self.results["explainability"].get("status") == "completed" else None,
-                    "reliability": {
-                        "score": self.results["reliability"].get("overall_score"),
-                        "weight": normalized_weights[1] if len(normalized_weights) > 1 else 0
-                    } if self.results["reliability"].get("status") == "completed" else None,
-                    "safety": {
-                        "score": self.results["safety"].get("overall_score"),
-                        "weight": normalized_weights[2] if len(normalized_weights) > 2 else 0
-                    } if self.results["safety"].get("status") == "completed" else None,
-                }
-            }
+        """Record overall pass/fail status based on all evaluations"""
+        # Simply record if all categories passed
+        self.results["overall"] = {
+            "explainability_pass": self.results["explainability"].get("status") == "completed" and 
+                                    self.results["explainability"].get("cot", {}).get("pass", False) and 
+                                    self.results["explainability"].get("citation", {}).get("pass", False),
+            "reliability_pass": self.results["reliability"].get("pass", False),
+            "safety_status": "completed" if self.results["safety"].get("status") == "completed" else "not_completed"
+        }
     
     def _save_results(self):
         """Save results to JSON file"""
@@ -666,7 +580,7 @@ class IntegratedAssessment:
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(self.results, f, ensure_ascii=False, indent=2)
         
-        print(f"\n📄 Results saved to: {output_file}")
+        print(f"\nResults saved to: {output_file}")
     
     # def _generate_html_report(self):
     #     """Generate HTML report"""
@@ -679,11 +593,11 @@ class IntegratedAssessment:
     #         report_file = self.output_dir / f"assessment_report_{model_name}_{timestamp}.html"
             
     #         generator.generate(report_file)
-    #         print(f"📊 HTML report generated: {report_file}")
+    #         print(f"HTML report generated: {report_file}")
     #     except ImportError:
-    #         print("⚠️  HTML report generator not available")
+    #         print("HTML report generator not available")
     #     except Exception as e:
-    #         print(f"⚠️  Error generating HTML report: {e}")
+    #         print(f"Error generating HTML report: {e}")
     
     def _print_summary(self):
         """Print evaluation summary"""
@@ -712,7 +626,7 @@ class IntegratedAssessment:
         # Safety
         if self.results["safety"].get("status") == "completed":
             safe = self.results["safety"]
-            print(f"\nSafety: {safe['overall_score']:.3f} {'✅ PASS' if safe['pass'] else 'FAIL'}")
+            print(f"\n🛡️  Safety:")
             
             # Module name mapping for better display
             module_display_names = {
@@ -727,7 +641,7 @@ class IntegratedAssessment:
             # Dynamically print all safety modules
             for module_name, module_data in safe.items():
                 # Skip meta fields
-                if module_name in ['status', 'overall_score', 'pass', 'threshold']:
+                if module_name in ['status']:
                     continue
                 
                 if isinstance(module_data, dict) and module_data.get("status") == "completed":
@@ -736,12 +650,9 @@ class IntegratedAssessment:
                     is_pass = module_data.get('pass', False)
                     print(f"   - {display_name}: {score:.3f} {'✅' if is_pass else '❌'}")
         
-        # Overall
-        if "score" in self.results["overall"]:
-            print(f"\n{'='*60}")
-            print(f"OVERALL SCORE: {self.results['overall']['score']:.3f}")
-            print(f"STATUS: {'✅ PASS' if self.results['overall']['pass'] else '❌ FAIL'}")
-            print(f"{'='*60}\n")
+        print(f"\n{'='*60}")
+        print(f"EVALUATION COMPLETED")
+        print(f"{'='*60}\n")
 
 
 async def main():
