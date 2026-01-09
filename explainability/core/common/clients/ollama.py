@@ -1,7 +1,7 @@
 from typing import Dict, Optional
 import aiohttp
 
-class AsyncLlamaClient:
+class AsyncOllamaClient:
     def __init__(self,
                  model: str = "llama3.1:8b",
                  temperature: float = 0.8,

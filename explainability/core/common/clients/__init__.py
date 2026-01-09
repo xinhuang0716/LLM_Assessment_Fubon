@@ -8,6 +8,6 @@ Provides async clients for:
 
 from .azureoai import AsyncAzureOAIClient
 from .gemini import AsyncGeminiClient
-from .llama3 import AsyncLlamaClient
+from .ollama import AsyncOllamaClient
 
-__all__ = ["AsyncAzureOAIClient", "AsyncGeminiClient", "AsyncLlamaClient"]
+__all__ = ["AsyncAzureOAIClient", "AsyncGeminiClient", "AsyncOllamaClient"]

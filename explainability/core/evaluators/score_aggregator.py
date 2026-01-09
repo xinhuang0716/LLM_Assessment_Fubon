@@ -1,6 +1,6 @@
 from typing import Dict, List, Any
 import numpy as np
-from core.config import CoTConfig, CitationConfig, OverallConfig
+from core.config import CoTConfig, CitationConfig
 
 class ScoreAggregator:    
     def __init__(self):
@@ -14,7 +14,7 @@ class ScoreAggregator:
         """
         self.cot_config = CoTConfig()
         self.citation_config = CitationConfig()
-        self.overall_config = OverallConfig()
+
     
     def aggregate_scores(self, cot_scores: List[float], citation_scores: List[float], cot_model: str, citation_response_model: str, citation_judge_model: str) -> Dict[str, Any]:
         """
@@ -55,17 +55,8 @@ class ScoreAggregator:
         cot_pass = avg_cot >= self.cot_config.avg_overall_threshold
         citation_pass = avg_citation >= self.citation_config.avg_overall_threshold
         
-        weighted_total = (
-            avg_cot * self.overall_config.weight_cot +
-            avg_citation * self.overall_config.weight_citation
-        )
-        
-        overall_pass = weighted_total >= self.overall_config.xai_pass_threshold
-        
+
         task_scores = {
-            'XAI_overall_score': round(float(weighted_total),3),
-            'overall_pass': bool(overall_pass),
-            'overall_threshold': float(self.overall_config.xai_pass_threshold),
             'cot': {
                 'model': cot_model,
                 'avg_score': round(float(avg_cot),3),
@@ -76,14 +67,10 @@ class ScoreAggregator:
             'citation': {
                 'response_model': citation_response_model,
                 'judge_model': citation_judge_model,
-                'avg_score': float(avg_citation),
+                'avg_score': round(float(avg_citation),3),
                 'count': len(citation_scores),
                 'pass': bool(citation_pass),
                 'threshold': float(self.citation_config.avg_overall_threshold),
-            },
-            'weights': {
-                'weight_cot': float(self.overall_config.weight_cot),
-                'weight_citation': float(self.overall_config.weight_citation),
             },
         }
         

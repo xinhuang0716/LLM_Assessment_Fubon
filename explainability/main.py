@@ -3,7 +3,7 @@ import warnings
 from datetime import datetime
 from pathlib import Path
 import json
-from core.common.clients import AsyncAzureOAIClient, AsyncGeminiClient, AsyncLlamaClient
+from core.common.clients import AsyncAzureOAIClient, AsyncGeminiClient, AsyncOllamaClient
 from core.common.paths import data_dir
 from core.pipelines import run_all
 from core.evaluators import ScoreAggregator, ResultProcessor
@@ -13,22 +13,42 @@ async def main():
     api_version = "2024-12-01-preview"
 
     cot_answer_llm = AsyncAzureOAIClient(
-        api_key="AOAI_API_KEY",
+        api_key="YOUR_API_KEY",
+        azure_endpoint=azure_endpoint,
+        api_version=api_version,
+        model="gpt-4o",
+        temperature=0.3
+    )
+    # cot_answer_llm = AsyncOllamaClient(
+    #     model="gpt-oss:20b", # "available_models": ["llama3.1:8b", "gemma3:12b", "gpt-oss:20b"],
+    #     temperature=0.3,
+    # )
+
+
+    # cite_answer_llm = AsyncAzureOAIClient(
+    #     api_key="YOUR_API_KEY",
+    #     azure_endpoint=azure_endpoint,
+    #     api_version=api_version,
+    #     model="gpt-4o",
+    #     temperature=0.3
+    # )
+
+    cite_answer_llm = AsyncOllamaClient(
+        model="gpt-oss:20b",
+        temperature=0.3,
+    )
+
+    cite_judge_llm = AsyncAzureOAIClient(
+        api_key="YOUR_API_KEY",
         azure_endpoint=azure_endpoint,
         api_version=api_version,
         model="gpt-4o"
     )
-
-    cite_answer_llm = AsyncLlamaClient(
-        model='llama3.1:8b',
-        temperature=0.3,
-    )
-
-    cite_judge_llm = AsyncGeminiClient(
-        api_key="GEMINI_API_KEY",
-        model="gemini-2.5-flash",
-        temperature=0.0
-    )
+    # cite_judge_llm = AsyncGeminiClient(
+    #     api_key="YOUR_API_KEY",
+    #     model="gemini-2.5-flash",
+    #     temperature=0.0
+    # )
 
     try:
         reports = await run_all(
@@ -41,7 +61,7 @@ async def main():
             cot_n_samples=30,
             cot_random_state= 50,
             citation_sample_method="random",
-            citation_n_samples=5,
+            citation_n_samples=30,
             citation_random_state = 50,
         )
 
@@ -53,15 +73,18 @@ async def main():
         task_scores = aggregator.aggregate_scores(
             cot_scores=cot_scores,
             citation_scores=citation_scores,
+            cot_model=getattr(cot_answer_llm,'model'),
+            citation_response_model=getattr(cite_answer_llm,'model'),
+            citation_judge_model=getattr(cite_judge_llm,'model')
         )
            
         output_dir = Path(__file__).parent / "outputs"
         output_dir.mkdir(exist_ok=True)
         
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_file_success_records = output_dir / f'SUCCESS_RECORDS_{timestamp}.json'
-        output_file_failed_records = output_dir / f'FAILED_RECORDS_{timestamp}.json'
-        output_file_score = output_dir / f'FINAL_RESULTS_{timestamp}.json'
+        timestamp = datetime.now().strftime("%Y%m%d")
+        output_file_success_records = output_dir / f'explainability_success_logs_{timestamp}.json'
+        output_file_failed_records = output_dir / f'explainability_failed_logs_{timestamp}.json'
+        output_file_score = output_dir / f'explainability_final_results_{timestamp}.json'
         
         with open(output_file_success_records, 'w', encoding='utf-8') as f:
             json.dump(success_records, f, ensure_ascii=False, indent=2)
@@ -80,4 +103,3 @@ async def main():
 if __name__ == "__main__":
     warnings.filterwarnings("ignore", category=DeprecationWarning)
     asyncio.run(main())
-

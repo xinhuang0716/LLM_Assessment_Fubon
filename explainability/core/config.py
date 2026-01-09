@@ -32,9 +32,3 @@ class CitationConfig:
     pass_threshold: float = 0.8 # indivaul
     avg_overall_threshold: float = 0.8 # average
 
-
-@dataclass
-class OverallConfig:
-    weight_cot: float = 0.5
-    weight_citation: float = 0.5
-    xai_pass_threshold: float = 0.8
