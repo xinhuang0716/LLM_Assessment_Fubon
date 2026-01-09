@@ -7,14 +7,10 @@ warnings.filterwarnings("ignore")
 
 from BBQ.pipeline import runEvaluation as runBBQEvaluation
 from BIPIA.pipeline import runEvaluation as runBIPIAEvaluation
-from Toxicity.pipeline import runEvaluation as runToxicityEvaluation
 from Toxicity.customLLM import AzureOpenAI, OllamaDeepEval
-
-from InformationDisclosure.customLLM import AzureOpenAI, OllamaDeepEval
+from Toxicity.pipeline import runEvaluation as runToxicityEvaluation
 from InformationDisclosure.pipeline import runEvaluation as runIDEvaluation
-from DirectPromptInjection.customLLM import AzureOpenAI, OllamaDeepEval
 from DirectPromptInjection.pipeline import runEvaluation as runDPIEvaluation
-
 from Misinformation.pipeline import runEvaluation as runMisinformationEvaluation
 
 
