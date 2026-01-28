@@ -42,8 +42,8 @@ LLM_Assessment_Fubon/
 |     Safety     |      Misinformation       | Pass Rate |  99%   |     90%     |            |             |
 |     Safety     |  Direct Prompt Injection  | Pass Rate |  94%   |     79%     |    63%     |     92%     |
 |     Safety     | Indirect Prompt Injection |    ASR    |  70%   |     70%     |    73%     |     55%     |
-|  Reliability   |Knowledge Accuracy (C-Eval)|  Accuracy |  74%   |     48%     |            |             |
-|  Reliability   |        Consistency        | Bert Score|  94%   |     92%     |            |             |
+|  Reliability   |Knowledge Accuracy (C-Eval)|  Accuracy |  74%   |     48%     |    56%     |     65%     |
+|  Reliability   |        Consistency        | Bert Score|  94%   |     92%     |    96%     |     92%     |
 | Explainability |   Chain-of-Thoughts(CoT)  | Pass Rate |  89%   |     78%     |    82%     |     88%     |
 | Explainability |   Citation validation     | Pass Rate |  98%   |     77%     |    82%     |     68%     |
 
